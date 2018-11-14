@@ -7,7 +7,9 @@ module ex (
 
 	// input control
 	input wire 					ctrl_AluSrc_i,
-	input wire 					ctrl_AluFinalOp_i,
+
+	// input alu
+	input wire[] 				alu_ctrl_i,
 	
 	// input of pc
 	input wire[`InstAddrBus]	pc_i,
@@ -21,10 +23,10 @@ module ex (
 	input wire[`ImmBus]			imm_data_i,
 
 	// output branch pc 
-	output reg 					branch_ce_o,
 	output reg[`InstAddrBus]	branch_pc_o,
 
 	// output alu result
+	output reg 					alu_branch_take_o,
 	output reg[`RegBus]			alu_result_o,
 
 	// output write mem data

@@ -13,7 +13,7 @@ module id_ex (
 	input wire 					ctrl_mem_read_i,
 	input wire 					ctrl_mem_write_i,
 	input wire					ctrl_ex_AluSrc_i,
-	input wire 					ctrl_ex_AluOp_i,
+	input wire[1:0] 			ctrl_ex_AluOp_i,
 
 	// input pc
 	input wire[`InstAddrBus]	pc_i,
@@ -41,7 +41,7 @@ module id_ex (
 	output reg 					ctrl_mem_read_o,
 	output reg 					ctrl_mem_write_o,
 	output reg					ctrl_ex_AluSrc_o,
-	output reg 					ctrl_ex_AluOp_o,
+	output reg[1:0] 			ctrl_ex_AluOp_o,
 
 	// output pc
 	output reg[`InstAddrBus]	pc_o,
@@ -71,27 +71,27 @@ module id_ex (
 		end
 		else
 		begin
-			ctrl_wb_RegWrite_i <= ctrl_wb_RegWrite_o;
-			ctrl_wb_Mem2Reg_i <= ctrl_wb_Mem2Reg_o;
-			ctrl_mem_branch_i <= ctrl_mem_branch_o;
-			ctrl_mem_read_i <= ctrl_mem_read_o;
-			ctrl_mem_write_i <= ctrl_mem_write_o;				
-			ctrl_ex_AluSrc_i <=	ctrl_ex_AluSrc_o;		
-			ctrl_ex_AluOp_i <= ctrl_ex_AluOp_o;
+			ctrl_wb_RegWrite_o <= ctrl_wb_RegWrite_i;
+			ctrl_wb_Mem2Reg_o <= ctrl_wb_Mem2Reg_i;
+			ctrl_mem_branch_o <= ctrl_mem_branch_i;
+			ctrl_mem_read_o <= ctrl_mem_read_i;
+			ctrl_mem_write_o <= ctrl_mem_write_i;				
+			ctrl_ex_AluSrc_o <=	ctrl_ex_AluSrc_i;		
+			ctrl_ex_AluOp_o <= ctrl_ex_AluOp_i;
 
-			pc_i <= pc_o;
+			pc_o <= pc_i;
 
-			reg1_data_i <= reg1_data_o;
-			reg2_ce_i <= reg2_ce_i;
-			reg2_data_i <= reg2_data_i;
+			reg1_data_o <= reg1_data_i;
+			reg2_ce_o <= reg2_ce_i;
+			reg2_data_o <= reg2_data_i;
 
-			imm_ce_i <= imm_ce_o;
-			imm_data_i <= imm_data_o;
+			imm_ce_o <= imm_ce_i;
+			imm_data_o <= imm_data_i;
 
-			alu_lr_i <= alu_lr_o;
-			alu_op_i <= alu_op_o;
+			alu_lr_o <= alu_lr_i;
+			alu_op_o <= alu_op_i;
 
-			write_addr_i <= write_addr_o;
+			write_addr_o <= write_addr_i;
 		end
 	end
 

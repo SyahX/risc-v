@@ -17,3 +17,4 @@
 
 // ALU
 `define AluOpBus 2:0
+`define AluCtrlBus 3:0

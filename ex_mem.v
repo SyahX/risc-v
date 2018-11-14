@@ -14,10 +14,10 @@ module ex_mem (
 	input wire 					ctrl_mem_write_i,
 
 	// intput branch pc 
-	input wire					branch_ce_i,
 	input wire[`InstAddrBus]	branch_pc_i,
 
 	// input alu result
+	input wire					alu_branch_take_i,
 	input wire[`RegBus]			alu_result_i,
 
 	// input write mem data
@@ -34,10 +34,10 @@ module ex_mem (
 	output reg 					ctrl_mem_write_o,
 
 	// output branch pc 
-	output reg					branch_ce_o,
 	output reg[`InstAddrBus]	branch_pc_o,
 
 	// output alu result
+	output reg					alu_branch_take_o,
 	output reg[`RegBus]			alu_result_o,
 
 	// output write mem data
@@ -55,20 +55,20 @@ module ex_mem (
 		end
 		else
 		begin
-			ctrl_wb_RegWrite_i <= ctrl_wb_RegWrite_o;
-			ctrl_wb_Mem2Reg_i <= ctrl_wb_Mem2Reg_o;
-			ctrl_mem_branch_i <= ctrl_mem_branch_o;
-			ctrl_mem_read_i <= ctrl_mem_read_o;
-			ctrl_mem_write_i <= ctrl_mem_write_o;				
+			ctrl_wb_RegWrite_o <= ctrl_wb_RegWrite_i;
+			ctrl_wb_Mem2Reg_o <= ctrl_wb_Mem2Reg_i;
+			ctrl_mem_branch_o <= ctrl_mem_branch_i;
+			ctrl_mem_read_o <= ctrl_mem_read_i;
+			ctrl_mem_write_o <= ctrl_mem_write_i;				
 
-			branch_ce_i <= branch_ce_o;
-			branch_pc_i <= branch_pc_o;
+			branch_pc_i <= branch_pc_i;
 
-			alu_result_i <= alu_result_o;
+			alu_branch_take_o <= alu_branch_take_i;
+			alu_result_o <= alu_result_i;
 
-			mem_write_data_i <= mem_write_data_o;
+			mem_write_data_o <= mem_write_data_i;
 
-			write_addr_i <= write_addr_o;
+			write_addr_o <= write_addr_i;
 		end
 	end
 
