@@ -47,14 +47,11 @@ module ex_mem (
 	output reg[`RegAddrBus]		write_addr_o,
 );
 
-	always @ (posedge clk) 
-	begin
-		if (rst == `Asserted) 
-		begin
+	always @ (posedge clk) begin
+		if (rst == `Asserted) begin
 			
 		end
-		else
-		begin
+		else begin
 			ctrl_wb_RegWrite_o <= ctrl_wb_RegWrite_i;
 			ctrl_wb_Mem2Reg_o <= ctrl_wb_Mem2Reg_i;
 			ctrl_mem_branch_o <= ctrl_mem_branch_i;

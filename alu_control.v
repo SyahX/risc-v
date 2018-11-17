@@ -13,7 +13,11 @@ module alu_control (
 	input wire[`AluOpBus]		alu_op_i,
 
 	// output 
-	output reg[`AluCtrlBus]		alu_ctrl
-)
+	output reg[`AluCtrlBus]		alu_ctrl_o
+);
+
+	always @ (*) begin
+		alu_ctrl_o <= {alu_lr_i, alu_op_i[`AluOpBus]};
+	end
 
 endmodule

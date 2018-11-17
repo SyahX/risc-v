@@ -23,12 +23,10 @@ module regfile (
 reg[`RegBus] regs[0 : `RegNum - 1]
 
 	// write register
-	always @ (*) 
-	begin
-		if (rst == `DeAsserted)
-		begin
-			if ((write_ce == `Assert) && (write_addr != `RegNumLog2'h0))
-			begin
+	always @ (*) begin
+		if (rst == `DeAsserted) begin
+			if ((write_ce == `Assert) && 
+				(write_addr != `RegNumLog2'h0)) begin
 				regs[write_addr] <= write_data;
 			end
 		end
@@ -37,20 +35,17 @@ reg[`RegBus] regs[0 : `RegNum - 1]
 	// read register 1
 	always @ (*)
 	begin
-		if (rst == `DeAsserted)
-		begin
+		if (rst == `DeAsserted) begin
 			read_data_1 <= `ZeroWord;
 		end
-		else if (read_addr_1 == `RegNumLog2'h0)
-		begin
+		else if (read_addr_1 == `RegNumLog2'h0) begin
 			read_data_1 <= `ZeroWord;
 		end
-		else if ((read_addr_1 == write_addr) && (write_ce == `Assert))
-		begin
+		else if ((read_addr_1 == write_addr) && 
+			     (write_ce == `Assert)) begin
 			read_data_1 <= write_data;
 		end
-		else
-		begin
+		else begin
 			read_data_1 <= regs[read_addr_1];
 		end
 	end
@@ -58,20 +53,16 @@ reg[`RegBus] regs[0 : `RegNum - 1]
 	// read register 2
 	always @ (*)
 	begin
-		if (rst == `DeAsserted)
-		begin
+		if (rst == `DeAsserted) begin
 			read_data_2 <= `ZeroWord;
 		end
-		else if (read_addr_2 == `RegNumLog2'h0)
-		begin
+		else if (read_addr_2 == `RegNumLog2'h0) begin
 			read_data_2 <= `ZeroWord;
 		end
-		else if ((read_addr_2 == write_addr) && (write_ce == `Assert))
-		begin
+		else if ((read_addr_2 == write_addr) && (write_ce == `Assert)) begin
 			read_data_2 <= write_data;
 		end
-		else
-		begin
+		else begin
 			read_data_2 <= regs[read_addr_2];
 		end
 	end

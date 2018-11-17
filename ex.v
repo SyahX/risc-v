@@ -6,17 +6,16 @@ module ex (
 	input wire rst,
 
 	// input control
-	input wire 					ctrl_AluSrc_i,
+	input wire 					ctrl_ex_AluSrc_i,
 
 	// input alu
-	input wire[] 				alu_ctrl_i,
+	input wire[`AluCtrlBus] 	alu_ctrl_i,
 	
 	// input of pc
 	input wire[`InstAddrBus]	pc_i,
 
 	// input resgiter
 	input wire[`RegBus]			reg1_data_i,
-	input wire					reg2_ce_i,
 	input wire[`RegBus]			reg2_data_i,
 
 	// input imm
@@ -32,5 +31,31 @@ module ex (
 	// output write mem data
 	output reg[`RegBus]			mem_write_data_o
 );
+	assign reg1 = reg1_data_i;
+	assign mem_write_data_o = reg2_data_i;
+	
+	wire[`RegBus] reg2;
+
+	always @ (*) begin
+		branch_pc_o <= pc_i + (imm_data_i << 1);
+
+		if (ctrl_AluSrc_i == `Asserted) begin
+			reg2 <= imm_data_i[`RegBus];
+		end
+		else begin
+			reg2 <= reg2_data_i[`RegBus];
+		end
+
+		case (alu_ctrl_i)
+			`EXE_OR : begin
+				alu_branch_take_o <= 0;
+				alu_result_o <= reg1 | reg2;
+			end
+			default : begin
+				alu_branch_take_o <= 0;
+				alu_result_o <= `ZeroWord;
+			end
+		endcase
+	end
 
 endmodule

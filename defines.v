@@ -18,3 +18,10 @@
 // ALU
 `define AluOpBus 2:0
 `define AluCtrlBus 3:0
+
+// ALU ctrl
+`define EXE_OR 4'b0110
+
+// inst type
+`define Rtype 7'b0110011
+`define Jtype 7'b0010011

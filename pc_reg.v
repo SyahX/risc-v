@@ -6,7 +6,7 @@ module pc_reg (
 	input wire		clk,
 	input wire		rst,
 
-	input wire 					pc_src,
+	input wire 					ctrl_pc_src_i,
 	input wire[`InstAddrBus]	pc_i,
 	input wire[`InstAddrBus]	branch_pc_i,
 
@@ -14,24 +14,19 @@ module pc_reg (
 	output reg[`InstAddrBus]	next_pc_o,
 );
 
-	always @ (posedge clk) 
-	begin
-		if (rst == `Asserted) 
-		begin
+	always @ (posedge clk) begin
+		if (rst == `Asserted) begin
 			pc_o <= 32'h00000000;
 		end
-		else
-		begin
-			if (pc_src == `Asserted)
-			begin
+		else begin
+			if (pc_src == `Asserted) begin
 				pc_o <= branch_pc_i;
 			end
-			else
-			begin
+			else begin
 				pc_o <= pc_i;
 			end
 		end
-		next_pc_o <= pc_o + 4'h4
+		next_pc_o <= pc_o + 4'h4;
 	end
 
 endmodule

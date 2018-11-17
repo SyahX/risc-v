@@ -10,9 +10,6 @@ module mem (
 	input wire 					ctrl_mem_read_i,
 	input wire 					ctrl_mem_write_i,
 
-	// intput branch pc 
-	input wire[`InstAddrBus]	branch_pc_i,
-
 	// input alu result
 	input wire					alu_branch_take_i,
 	input wire[`RegBus]			alu_result_i,
@@ -24,7 +21,18 @@ module mem (
 	output reg[`RegBus]			mem_read_data_o,
 
 	// output 
-	output reg[`RegBus]			alu_result_o
+	output reg[`RegBus]			alu_result_o,
+
+	//output
+	output reg 					ctrl_pc_src_o
 );
+	
+	assign alu_result_o = alu_result_i;
+	always @ (*) begin
+		// branch pc take
+		if (alu_branch_take_i && ctrl_mem_branch_i) begin
+			pc_src_o <= 1'b1;
+		end
+	end
 
 endmodule

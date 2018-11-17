@@ -13,18 +13,16 @@ module id_ex (
 	input wire 					ctrl_mem_read_i,
 	input wire 					ctrl_mem_write_i,
 	input wire					ctrl_ex_AluSrc_i,
-	input wire[1:0] 			ctrl_ex_AluOp_i,
+	input wire[`AluOpBus] 		ctrl_ex_AluOp_i,
 
 	// input pc
 	input wire[`InstAddrBus]	pc_i,
 
 	// input register data
 	input wire[`RegBus]			reg1_data_i,
-	input wire 					reg2_ce_i,
 	input wire[`RegBus]			reg2_data_i,
 	
 	// input of imm
-	input wire					imm_ce_i,
 	input wire[`ImmBus]			imm_data_i,
 
 	// input ALU ctrl 
@@ -48,11 +46,9 @@ module id_ex (
 
 	// output register data
 	output reg[`RegBus]			reg1_data_o,
-	output reg 					reg2_ce_o,
 	output reg[`RegBus]			reg2_data_o,
 	
 	// output of imm
-	output reg					imm_ce_o,
 	output reg[`ImmBus]			imm_data_o,
 
 	// output ALU ctrl 
@@ -63,14 +59,11 @@ module id_ex (
 	output reg[`RegAddrBus]		write_addr_o,
 );
 
-	always @ (posedge clk) 
-	begin
-		if (rst == `Asserted) 
-		begin
+	always @ (posedge clk) begin
+		if (rst == `Asserted) begin
 			
 		end
-		else
-		begin
+		else begin
 			ctrl_wb_RegWrite_o <= ctrl_wb_RegWrite_i;
 			ctrl_wb_Mem2Reg_o <= ctrl_wb_Mem2Reg_i;
 			ctrl_mem_branch_o <= ctrl_mem_branch_i;
