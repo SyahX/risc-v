@@ -3,3 +3,4 @@ thinpad_top.hw/
 thinpad_top.runs/
 thinpad_top.ip_user_files/
 thinpad_top.sim/
+*.DS_Store

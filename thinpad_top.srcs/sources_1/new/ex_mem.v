@@ -49,8 +49,20 @@ module ex_mem (
 
 	always @ (posedge clk) begin
 		if (rst == `Asserted) begin
-		
-			
+			ctrl_wb_RegWrite_o <= `DeAsserted;
+			ctrl_wb_Mem2Reg_o <= `DeAsserted;
+			ctrl_mem_branch_o <= `DeAsserted;
+			ctrl_mem_read_o <= `DeAsserted;
+			ctrl_mem_write_o <= `DeAsserted;				
+
+			branch_pc_o <= `ZeroWord;
+
+			alu_branch_take_o <= `DeAsserted;
+			alu_result_o <= `ZeroWord;
+
+			mem_write_data_o <= `ZeroWord;
+
+			write_addr_o <= `ZeroWord;
 		end
 		else begin
 			ctrl_wb_RegWrite_o <= ctrl_wb_RegWrite_i;

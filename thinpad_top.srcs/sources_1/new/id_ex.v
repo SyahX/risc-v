@@ -61,7 +61,25 @@ module id_ex (
 
 	always @ (posedge clk) begin
 		if (rst == `Asserted) begin
-			
+			ctrl_wb_RegWrite_o <= `DeAsserted;
+			ctrl_wb_Mem2Reg_o <= `DeAsserted;
+			ctrl_mem_branch_o <= `DeAsserted;
+			ctrl_mem_read_o <= `DeAsserted;
+			ctrl_mem_write_o <= `DeAsserted;				
+			ctrl_ex_AluSrc_o <=	`DeAsserted;		
+			ctrl_ex_AluOp_o <= 4'b0000;
+
+			pc_o <= `ZeroWord;
+
+			reg1_data_o <= `ZeroWord;
+			reg2_data_o <= `ZeroWord;
+
+			imm_data_o <= `ZeroWord;
+
+			alu_lr_o <= 1'b0;
+			alu_op_o <= 4'b000;
+
+			write_addr_o <= 5'b00000;
 		end
 		else begin
 			ctrl_wb_RegWrite_o <= ctrl_wb_RegWrite_i;

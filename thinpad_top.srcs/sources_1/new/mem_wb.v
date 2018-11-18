@@ -36,7 +36,14 @@ module mem_wb (
 
 	always @ (posedge clk) begin
 		if (rst == `Asserted) begin
+			ctrl_wb_RegWrite_o <= `DeAsserted;
+			ctrl_wb_Mem2Reg_o <= `DeAsserted;
+
+			mem_read_data_o <= `ZeroWord;
 			
+			alu_result_o <= `ZeroWord;
+
+			write_addr_o <= 5'b00000;
 		end
 		else begin
 			ctrl_wb_RegWrite_o <= ctrl_wb_RegWrite_i;
