@@ -11,11 +11,21 @@ module pc_reg (
 	input wire[`InstAddrBus]	branch_pc_i,
 
 	output reg[`InstAddrBus]	pc_o,
-	output reg[`InstAddrBus]	next_pc_o
+	//output reg[`InstAddrBus]	next_pc_o,
+	
+	output reg                  rom_ce_o
 );
+    always @ (posedge clk) begin
+        if (rst == `Asserted) begin
+            rom_ce_o <= `DeAsserted;
+        end
+        else begin
+            rom_ce_o <= `Asserted;
+        end
+    end
 
 	always @ (posedge clk) begin
-		if (rst == `Asserted) begin
+		if (rom_ce_o == `DeAsserted) begin
 			pc_o <= 32'h00000000;
 		end
 		else begin
@@ -25,8 +35,9 @@ module pc_reg (
 			else begin
 				pc_o <= pc_i;
 			end
+			
 		end
-		next_pc_o <= pc_o + 4'h4;
+		
 	end
 
 endmodule

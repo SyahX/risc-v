@@ -17,7 +17,7 @@ module risc (
 	wire[`InstAddrBus] mem_branch_pc_i;
 	
 	wire[`InstAddrBus] next_pc_o;
-	assign next_pc_o = next_pc_i;
+	assign next_pc_i = pc + 4;
 
 	wire mem_ctrl_pc_src_o;
 
@@ -44,7 +44,7 @@ module risc (
 	wire id_ctrl_mem_read_o;
 	wire id_ctrl_mem_write_o;
 	wire id_ctrl_ex_AluSrc_o; 
-	wire[`AluOpBus] id_ctrl_ex_AluOp_o;
+	wire[`CtrlAluOpBus] id_ctrl_ex_AluOp_o;
 
 	//ex
 	wire ex_ctrl_wb_RegWrite_i;
@@ -53,7 +53,7 @@ module risc (
 	wire ex_ctrl_mem_read_i;
 	wire ex_ctrl_mem_write_i;
 	wire ex_ctrl_ex_AluSrc_i; 
-	wire[`AluOpBus] ex_ctrl_ex_AluOp_i;
+	wire[`CtrlAluOpBus] ex_ctrl_ex_AluOp_i;
 	
 	wire[`InstAddrBus] ex_pc_i;
 	wire[`RegBus] ex_reg1_data_i;
@@ -61,7 +61,7 @@ module risc (
 	wire[`ImmBus] ex_imm_data_i;
 	wire ex_alu_lr_i;
 	wire[`AluOpBus] ex_alu_op_i;
-	wire[`InstAddrBus] ex_write_addr_i;
+	wire[`RegAddrBus] ex_write_addr_i;
 
 	wire[`InstAddrBus] ex_branch_pc_o;
 	wire ex_alu_branch_take_o;
@@ -123,7 +123,8 @@ module risc (
 		.branch_pc_i(mem_branch_pc_i),
 
 		.pc_o(pc),
-		.next_pc_o(next_pc_o)
+		//.next_pc_o(next_pc_o),
+		.rom_ce_o(rom_ce_o)
 	);
 
 	assign rom_addr_o = pc;
@@ -299,7 +300,7 @@ module risc (
 
 		.mem_write_data_o(mem_mem_write_data_i),
 
-		.write_addr_o(mem_write_addr_i),
+		.write_addr_o(mem_write_addr_i)
 	);
 
 	mem mem0(
@@ -353,7 +354,7 @@ module risc (
 		.mem_read_data_i(wb_mem_read_data_i),
 		.alu_result_i(wb_alu_result_i),
 
-		.write_data_o(wb_write_data_o),
+		.write_data_o(wb_write_data_o)
 	);
 
 endmodule

@@ -23,11 +23,12 @@ module regfile (
 reg[`RegBus] regs[0 : `RegNum - 1];
 
 	// write register
-	always @ (*) begin
+	always @ (posedge clk) begin
 		if (rst == `DeAsserted) begin
 			if ((write_ce == `Asserted) && 
 				(write_addr != `RegNumLog2'h0)) begin
 				regs[write_addr] <= write_data;
+				$display("%d %h\n", write_addr, write_data);
 			end
 		end
 	end

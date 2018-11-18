@@ -6,7 +6,7 @@ module alu_control (
 	input wire rst,
 
 	// input control
-	input wire[1:0] 			ctrl_ex_AluOp_i,
+	input wire[`CtrlAluOpBus] 	ctrl_ex_AluOp_i,
 
 	// input ALU ctrl 
 	input wire					alu_lr_i,

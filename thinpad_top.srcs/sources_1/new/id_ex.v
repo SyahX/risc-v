@@ -13,7 +13,7 @@ module id_ex (
 	input wire 					ctrl_mem_read_i,
 	input wire 					ctrl_mem_write_i,
 	input wire					ctrl_ex_AluSrc_i,
-	input wire[`AluOpBus] 		ctrl_ex_AluOp_i,
+	input wire[`CtrlAluOpBus] 	ctrl_ex_AluOp_i,
 
 	// input pc
 	input wire[`InstAddrBus]	pc_i,
@@ -39,7 +39,7 @@ module id_ex (
 	output reg 					ctrl_mem_read_o,
 	output reg 					ctrl_mem_write_o,
 	output reg					ctrl_ex_AluSrc_o,
-	output reg[1:0] 			ctrl_ex_AluOp_o,
+	output reg[`CtrlAluOpBus] 	ctrl_ex_AluOp_o,
 
 	// output pc
 	output reg[`InstAddrBus]	pc_o,
@@ -77,7 +77,7 @@ module id_ex (
 			imm_data_o <= `ZeroWord;
 
 			alu_lr_o <= 1'b0;
-			alu_op_o <= 4'b000;
+			alu_op_o <= 3'b000;
 
 			write_addr_o <= 5'b00000;
 		end

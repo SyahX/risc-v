@@ -23,6 +23,7 @@
 // ALU
 `define AluOpBus 2:0
 `define AluCtrlBus 3:0
+`define CtrlAluOpBus 1:0
 
 // ALU ctrl
 `define EXE_OR 4'b0110
