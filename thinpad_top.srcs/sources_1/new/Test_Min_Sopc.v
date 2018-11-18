@@ -1,5 +1,7 @@
 `timescale 1ns / 1ps
 
+`include "defines.v"
+
 module Test_Min_Sopc(
     
 );
@@ -12,8 +14,8 @@ module Test_Min_Sopc(
     end
     
     initial begin
-        rst = `RstEnable;
-        #195 rst= `RstDisable;
+        rst = `Asserted;
+        #195 rst= `DeAsserted;
         #3000 $stop;
     end
     

@@ -44,11 +44,12 @@ module ex_mem (
 	output reg[`RegBus]			mem_write_data_o,
 
 	// output of register write addr
-	output reg[`RegAddrBus]		write_addr_o,
+	output reg[`RegAddrBus]		write_addr_o
 );
 
 	always @ (posedge clk) begin
 		if (rst == `Asserted) begin
+		
 			
 		end
 		else begin
@@ -58,7 +59,7 @@ module ex_mem (
 			ctrl_mem_read_o <= ctrl_mem_read_i;
 			ctrl_mem_write_o <= ctrl_mem_write_i;				
 
-			branch_pc_i <= branch_pc_i;
+			branch_pc_o <= branch_pc_i;
 
 			alu_branch_take_o <= alu_branch_take_i;
 			alu_result_o <= alu_result_i;

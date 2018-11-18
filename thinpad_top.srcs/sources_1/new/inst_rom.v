@@ -12,7 +12,7 @@ module inst_rom(
     //initial $readmemh ( "/mnt/hgfs/Virtualbox/CPU/test/C4/inst_rom.data", inst_mem );
     //initial $readmemh ( "D:/Virtualbox/CPU/test/C11/test1/inst_rom.data", inst_mem );
     always @ (*) begin
-        if (ce == `ChipDisable) begin
+        if (ce == `DeAsserted) begin
             inst <= `ZeroWord;
         end else begin
             inst <= inst_mem[addr[`InstMemNumLog2+1:2]];

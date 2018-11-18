@@ -31,7 +31,7 @@ module mem_wb (
 	output reg[`RegBus]			alu_result_o,
 
 	// output of register write addr
-	output reg[`RegAddrBus]		write_addr_o,
+	output reg[`RegAddrBus]		write_addr_o
 );
 
 	always @ (posedge clk) begin

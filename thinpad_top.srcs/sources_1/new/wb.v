@@ -15,11 +15,11 @@ module wb (
 	input wire[`RegBus]		alu_result_i,
 	
 	// data write to reg
-	output reg[`RegBus]		write_data_o,
+	output reg[`RegBus]		write_data_o
 );
 	always @ (*) begin
-		if (rst == `Assert) begin
-
+		if (rst == `Asserted) begin
+            write_data_o <= `ZeroWord;
 		end
 		else if (ctrl_wb_Mem2Reg_i == `Asserted) begin
 			write_data_o <= mem_read_data_i;

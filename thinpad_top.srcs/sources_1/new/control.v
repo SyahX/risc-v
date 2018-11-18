@@ -22,23 +22,23 @@ module control (
 
 	always @ (*) begin
 		if (rst == `Asserted) begin
-			ctrl_wb_RegWrite_o <= `DeAssert;
-			ctrl_wb_Mem2Reg_o <= `DeAssert;
-			ctrl_mem_branch_o <= `DeAssert;
-			ctrl_mem_read_o <= `DeAssert;
-			ctrl_mem_write_o <= `DeAssert;
-			ctrl_ex_AluSrc_o <= `DeAssert;
+			ctrl_wb_RegWrite_o <= `DeAsserted;
+			ctrl_wb_Mem2Reg_o <= `DeAsserted;
+			ctrl_mem_branch_o <= `DeAsserted;
+			ctrl_mem_read_o <= `DeAsserted;
+			ctrl_mem_write_o <= `DeAsserted;
+			ctrl_ex_AluSrc_o <= `DeAsserted;
 			ctrl_ex_AluOp_o <= 3'b000;
 		end
 		else begin
 			//ori
 			if ((op == `Itype) && (funct3 == 3'b110)) begin
-				ctrl_wb_RegWrite_o <= `DeAssert;
-				ctrl_wb_Mem2Reg_o <= `Assert;
-				ctrl_mem_branch_o <= `DeAssert;
-				ctrl_mem_read_o <= `DeAssert;
-				ctrl_mem_write_o <= `DeAssert;
-				ctrl_ex_AluSrc_o <= `Assert;
+				ctrl_wb_RegWrite_o <= `DeAsserted;
+				ctrl_wb_Mem2Reg_o <= `Asserted;
+				ctrl_mem_branch_o <= `DeAsserted;
+				ctrl_mem_read_o <= `DeAsserted;
+				ctrl_mem_write_o <= `DeAsserted;
+				ctrl_ex_AluSrc_o <= `Asserted;
 				ctrl_ex_AluOp_o <= 3'b110;
 			end
 		end

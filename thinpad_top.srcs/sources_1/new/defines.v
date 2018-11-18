@@ -8,12 +8,17 @@
 // instruction
 `define InstAddrBus 31:0
 `define InstBus 31:0
+`define InstMemNum 131071
+`define InstMemNumLog2 17
 
 // register
 `define RegAddrBus 4:0
 `define RegBus 31:0
 `define RegNum 32
 `define RegNumLog2 5
+
+// imm
+`define ImmBus 31:0
 
 // ALU
 `define AluOpBus 2:0
@@ -24,4 +29,4 @@
 
 // inst type
 `define Rtype 7'b0110011
-`define Jtype 7'b0010011
+`define Itype 7'b0010011

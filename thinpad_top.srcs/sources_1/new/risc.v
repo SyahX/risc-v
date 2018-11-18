@@ -8,13 +8,16 @@ module risc (
 
 	input  wire[`RegBus]		rom_data_i,
 	output wire[`RegBus]		rom_addr_o,
-	output wire					rom_ce_o,
+	output wire					rom_ce_o
 );
 	
 	// pc_reg
 	wire[`InstAddrBus] pc;
-	wire[`InstAddrBus] next_pc;
+	wire[`InstAddrBus] next_pc_i;
 	wire[`InstAddrBus] mem_branch_pc_i;
+	
+	wire[`InstAddrBus] next_pc_o;
+	assign next_pc_o = next_pc_i;
 
 	wire mem_ctrl_pc_src_o;
 
@@ -57,7 +60,7 @@ module risc (
 	wire[`RegBus] ex_reg2_data_i;
 	wire[`ImmBus] ex_imm_data_i;
 	wire ex_alu_lr_i;
-	wire[`AluOpBus] ex_alu_op_i
+	wire[`AluOpBus] ex_alu_op_i;
 	wire[`InstAddrBus] ex_write_addr_i;
 
 	wire[`InstAddrBus] ex_branch_pc_o;
@@ -66,6 +69,13 @@ module risc (
 	wire[`RegBus] ex_mem_write_data_o;
 
 	wire[`AluCtrlBus] alu_ctrl;
+	
+	wire ex_ctrl_wb_RegWrite_o;
+    wire ex_ctrl_wb_Mem2Reg_o;
+    wire ex_ctrl_mem_branch_o;
+    wire ex_ctrl_mem_read_o;
+    wire ex_ctrl_mem_write_o;
+    wire[`RegAddrBus] ex_write_addr_o;
 
 	assign ex_ctrl_wb_RegWrite_o = ex_ctrl_wb_RegWrite_i;
 	assign ex_ctrl_wb_Mem2Reg_o = ex_ctrl_wb_Mem2Reg_i;
@@ -84,7 +94,11 @@ module risc (
 	wire[`RegBus] mem_alu_result_i;
 	wire[`RegBus] mem_mem_write_data_i;
 	wire[`RegAddrBus] mem_write_addr_i;
-
+	
+	
+    wire mem_ctrl_wb_RegWrite_o;
+    wire mem_ctrl_wb_Mem2Reg_o;
+    wire[`RegAddrBus] mem_write_addr_o;
 	assign mem_ctrl_wb_RegWrite_o = mem_ctrl_wb_RegWrite_i;
 	assign mem_ctrl_wb_Mem2Reg_o = mem_ctrl_wb_Mem2Reg_i;
 	assign mem_write_addr_o = mem_write_addr_i;
@@ -109,7 +123,7 @@ module risc (
 		.branch_pc_i(mem_branch_pc_i),
 
 		.pc_o(pc),
-		.next_pc_o(next_pc)
+		.next_pc_o(next_pc_o)
 	);
 
 	assign rom_addr_o = pc;
@@ -252,9 +266,6 @@ module risc (
 
 		.mem_write_data_o(ex_mem_write_data_o)
 	);
-
-
-
 
 	ex_mem ex_mem0(
 		.clk(clk),

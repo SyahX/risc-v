@@ -31,15 +31,15 @@ module ex (
 	// output write mem data
 	output reg[`RegBus]			mem_write_data_o
 );
+    wire[`RegBus] reg1;
+    reg[`RegBus] reg2;
 	assign reg1 = reg1_data_i;
-	assign mem_write_data_o = reg2_data_i;
 	
-	wire[`RegBus] reg2;
-
 	always @ (*) begin
 		branch_pc_o <= pc_i + (imm_data_i << 1);
+		mem_write_data_o <= reg2_data_i;
 
-		if (ctrl_AluSrc_i == `Asserted) begin
+		if (ctrl_ex_AluSrc_i == `Asserted) begin
 			reg2 <= imm_data_i[`RegBus];
 		end
 		else begin

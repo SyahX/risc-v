@@ -27,11 +27,11 @@ module mem (
 	output reg 					ctrl_pc_src_o
 );
 	
-	assign alu_result_o = alu_result_i;
 	always @ (*) begin
 		// branch pc take
+		alu_result_o <= alu_result_i;
 		if (alu_branch_take_i && ctrl_mem_branch_i) begin
-			pc_src_o <= 1'b1;
+			ctrl_pc_src_o <= 1'b1;
 		end
 	end
 

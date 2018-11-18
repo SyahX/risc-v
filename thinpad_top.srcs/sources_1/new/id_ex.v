@@ -56,7 +56,7 @@ module id_ex (
 	output reg[`AluOpBus]		alu_op_o,
 
 	// output of register write addr
-	output reg[`RegAddrBus]		write_addr_o,
+	output reg[`RegAddrBus]		write_addr_o
 );
 
 	always @ (posedge clk) begin
@@ -75,10 +75,8 @@ module id_ex (
 			pc_o <= pc_i;
 
 			reg1_data_o <= reg1_data_i;
-			reg2_ce_o <= reg2_ce_i;
 			reg2_data_o <= reg2_data_i;
 
-			imm_ce_o <= imm_ce_i;
 			imm_data_o <= imm_data_i;
 
 			alu_lr_o <= alu_lr_i;
