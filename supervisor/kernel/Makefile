@@ -1,5 +1,6 @@
 RM	:= rm -f
-GCCPREFIX	:= /PATH/bin/riscv32-unknown-elf-    # linux 下编译器的地址，可能根据不同的操作系统有所修改
+GCCPREFIX := /PATH/bin/riscv32-unknown-elf-
+# linux 下编译器的地址，可能根据不同的操作系统有所修改
 LD	:= $(GCCPREFIX)ld
 CC	:= $(GCCPREFIX)gcc
 AS  := $(GCCPREFIX)as
@@ -12,7 +13,7 @@ LDSCRIPT	:= kern/kernel.ld
 SRC	:= $(foreach sdir, $(SRCDIR), $(wildcard $(sdir)/*.S))
 OBJ	:= $(patsubst $(SRCDIR)/%.S, $(OBJDIR)/%.o, $(SRC))
 TARGET	:= kernel.elf
-ASFLAG	:= -D__ASSEMBLY__ -g
+ASFLAG	:= -D__ASSEMBLY__ -march=rv32i -mabi=ilp32 -g
 
 override ON_FPGA ?= n
 
@@ -22,6 +23,8 @@ else
    	MACH_DEF = -DMACH_QEMU
 endif
 ASFLAG += $(MACH_DEF)
+
+.PHONY: all clean show-utest
 
 all:checkdirs $(TARGET) kernel.bin
 
