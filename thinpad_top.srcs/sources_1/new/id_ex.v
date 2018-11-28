@@ -9,7 +9,6 @@ module id_ex (
 	// control input 
 	input wire					ctrl_wb_RegWrite_i,
 	input wire					ctrl_wb_Mem2Reg_i,
-	input wire 					ctrl_mem_branch_i,
 	input wire 					ctrl_mem_read_i,
 	input wire 					ctrl_mem_write_i,
 	input wire					ctrl_ex_AluSrc_i,
@@ -35,7 +34,6 @@ module id_ex (
 	// control output 
 	output reg					ctrl_wb_RegWrite_o,
 	output reg					ctrl_wb_Mem2Reg_o,
-	output reg 					ctrl_mem_branch_o,
 	output reg 					ctrl_mem_read_o,
 	output reg 					ctrl_mem_write_o,
 	output reg					ctrl_ex_AluSrc_o,
@@ -63,7 +61,6 @@ module id_ex (
 		if (rst == `Asserted) begin
 			ctrl_wb_RegWrite_o <= `DeAsserted;
 			ctrl_wb_Mem2Reg_o <= `DeAsserted;
-			ctrl_mem_branch_o <= `DeAsserted;
 			ctrl_mem_read_o <= `DeAsserted;
 			ctrl_mem_write_o <= `DeAsserted;				
 			ctrl_ex_AluSrc_o <=	`DeAsserted;		
@@ -84,7 +81,6 @@ module id_ex (
 		else begin
 			ctrl_wb_RegWrite_o <= ctrl_wb_RegWrite_i;
 			ctrl_wb_Mem2Reg_o <= ctrl_wb_Mem2Reg_i;
-			ctrl_mem_branch_o <= ctrl_mem_branch_i;
 			ctrl_mem_read_o <= ctrl_mem_read_i;
 			ctrl_mem_write_o <= ctrl_mem_write_i;				
 			ctrl_ex_AluSrc_o <=	ctrl_ex_AluSrc_i;		

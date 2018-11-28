@@ -29,7 +29,10 @@ module id (
 	output reg[`AluOpBus]		alu_op_o,
 	
 	// write register
-	output reg[`RegAddrBus]		write_addr_o
+	output reg[`RegAddrBus]		write_addr_o,
+
+	// branch pc
+	output reg[`InstAddrBus]	branch_pc_o
 );
 	
 	wire[6:0] op = inst_i[6:0];
@@ -44,6 +47,8 @@ module id (
 
 		reg1_addr_o <= inst_i[19:15];
 		reg2_addr_o <= inst_i[24:20];
+
+		branch_pc_o <= {19'b0, inst_i[31:20], 1'b0} + pc_i;
 	end
 
 	// Alu

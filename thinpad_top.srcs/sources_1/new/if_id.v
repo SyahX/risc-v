@@ -6,6 +6,7 @@ module if_id(
 	input wire clk,
 	input wire rst,
 
+	input wire 					ctrl_if_flush,
 	input wire[`InstAddrBus]	if_pc,
 	input wire[`InstBus]		if_inst,
 	
@@ -18,7 +19,7 @@ module if_id(
 			id_pc <= `ZeroWord;
 			id_inst <= `ZeroWord;
 		end 
-		else begin
+		else if (ctrl_if_flush == `DeAsserted) begin
 			id_pc <= if_pc;
 			id_inst <= if_inst;
 		end

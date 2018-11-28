@@ -17,7 +17,17 @@ module alu_control (
 );
 
 	always @ (*) begin
-		alu_ctrl_o <= {alu_lr_i, alu_op_i[`AluOpBus]};
+		case (ctrl_ex_AluOp_i)
+			`AluOp_Itype : begin
+				alu_ctrl_o <= {alu_lr_i, alu_op_i};
+			end
+			`AluOp_Rtype : begin
+				alu_ctrl_o <= {alu_lr_i, alu_op_i};
+			end
+			default : begin
+				alu_ctrl_o <= `EXE_NOP;
+			end
+		endcase
 	end
 
 endmodule

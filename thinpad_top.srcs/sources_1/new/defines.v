@@ -26,8 +26,27 @@
 `define CtrlAluOpBus 1:0
 
 // ALU ctrl
-`define EXE_OR 4'b0110
+`define EXE_ADD  4'b0000
+`define EXE_SUB  4'b1000
+`define EXE_SLL  4'b0001
+`define EXE_SLT  4'b0010
+`define EXE_SLTU 4'b0011
+`define EXE_XOR  4'b0100
+`define EXE_SRL  4'b0101
+`define EXE_SRA  4'b1101
+`define EXE_OR   4'b0110
+`define EXE_AND  4'b0111
 
 // inst type
 `define Rtype 7'b0110011
 `define Itype 7'b0010011
+`define Btype 7'b1100011
+`define Stype 7'b0100011
+
+// branch
+`define BEQ 3'b000
+`define BNE 3'b001
+`define BLT 3'b100
+`define BGE 3'b101
+`define BLTU 3'b110
+`define BGEU 3'b111
