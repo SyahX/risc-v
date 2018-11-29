@@ -3,16 +3,32 @@
 `include "defines.v"
 
 module compare (
-	input wire[`InstBus]	inst_i,
-	input wire[`RegBus]		reg1_data_i,
-	input wire[`RegBus]		reg2_data_i,
+	input wire[`InstBus]		inst_i,
+	input wire[`RegBus]			reg1_data_i,
+	input wire[`RegBus]			reg2_data_i,
+	
+	input wire[`InstAddrBus]	pc_i,
+	input wire[`InstAddrBus]	branch_imm_i,
+	output reg[`InstAddrBus]	branch_pc_o,
 
 	// output 
-	output reg 				ctrl_pc_src_o
+	output reg 					ctrl_pc_src_o
 
 );
 	wire[6:0] op = inst_i[6:0];
 	wire[2:0] funct3 = inst_i[14:12];
+	
+	// branch pc
+	always @ (*) begin
+		if (op == `Btype || op == `JAL) begin
+			branch_pc_o <= branch_imm_i + pc_i;
+		end 
+		else if (op == `JALR) begin
+			branch_pc_o <= {(branch_imm_i + reg1_data_i)[31:1], 1'b0};
+		end
+	end
+
+	// compare
 	always @ (*) begin
 		if (op == `Btype) begin
 			case (funct3)
@@ -31,17 +47,19 @@ module compare (
 					end
 				end
 				`BLT : begin
-					if (reg1_data_i == reg2_data_i) begin
-						ctrl_pc_src_o <= `Asserted;
-					end else begin
-						ctrl_pc_src_o <= `DeAsserted;
+					if ((reg1_data_i + (~reg2_data_i) + 1)[31]) begin
+						ctrl_pc_src_o <= 32'b0;
+					end 
+					else begin
+						ctrl_pc_src_o <= 32'b1;
 					end
 				end
 				`BGE : begin
-					if (reg1_data_i == reg2_data_i) begin
-						ctrl_pc_src_o <= `Asserted;
-					end else begin
-						ctrl_pc_src_o <= `DeAsserted;
+					if ((reg1_data_i + (~reg2_data_i) + 1)[31]) begin
+						ctrl_pc_src_o <= 32'b1;
+					end 
+					else begin
+						ctrl_pc_src_o <= 32'b0;
 					end
 				end
 				`BLTU : begin
@@ -52,7 +70,8 @@ module compare (
 					end
 				end
 				`BGEU : begin
-					if (reg1_data_i >= reg2_data_i) begin
+					if (reg1_data_i > reg2_data_i || 
+						reg1_data_i == reg2_data_i) begin
 						ctrl_pc_src_o <= `Asserted;
 					end else begin
 						ctrl_pc_src_o <= `DeAsserted;

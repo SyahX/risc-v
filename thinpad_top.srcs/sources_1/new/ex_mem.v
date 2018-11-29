@@ -21,6 +21,8 @@ module ex_mem (
 	// input of register write addr
 	input wire[`RegAddrBus]		write_addr_i,
 
+	input wire[`MemOpBus]		mem_op_i,
+
 	// control output 
 	output reg					ctrl_wb_RegWrite_o,
 	output reg					ctrl_wb_Mem2Reg_o,
@@ -34,7 +36,9 @@ module ex_mem (
 	output reg[`RegBus]			mem_write_data_o,
 
 	// output of register write addr
-	output reg[`RegAddrBus]		write_addr_o
+	output reg[`RegAddrBus]		write_addr_o,
+
+	output reg[`MemOpBus]		mem_op_o
 );
 
 	always @ (posedge clk) begin
@@ -49,6 +53,8 @@ module ex_mem (
 			mem_write_data_o <= `ZeroWord;
 
 			write_addr_o <= `ZeroWord;
+
+			mem_op_o <= 3'b000;
 		end
 		else begin
 			ctrl_wb_RegWrite_o <= ctrl_wb_RegWrite_i;
@@ -61,6 +67,8 @@ module ex_mem (
 			mem_write_data_o <= mem_write_data_i;
 
 			write_addr_o <= write_addr_i;
+
+			mem_op_o <= mem_op_i;
 		end
 	end
 

@@ -2,7 +2,7 @@
 
 `include "defines.v"
 
-module ex_mem (
+module forward (
 	// input reg addr in id
 	input wire[`RegAddrBus]		id_reg1_addr_i,
 	input wire[`RegAddrBus]		id_reg2_addr_i,

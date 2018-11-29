@@ -15,6 +15,8 @@ module mem (
 	// input write mem data
 	input wire[`RegBus]			mem_write_data_i,
 
+	input wire[`MemOpBus]		mem_op_i,
+
 	// output mem
 	output reg[`RegBus]			mem_read_data_o,
 
@@ -24,7 +26,6 @@ module mem (
 );
 	
 	always @ (*) begin
-		// branch pc take
 		alu_result_o <= alu_result_i;
 	end
 

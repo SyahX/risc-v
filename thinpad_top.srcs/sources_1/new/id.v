@@ -32,7 +32,7 @@ module id (
 	output reg[`RegAddrBus]		write_addr_o,
 
 	// branch pc
-	output reg[`InstAddrBus]	branch_pc_o
+	output reg[`InstAddrBus]	branch_imm_o
 );
 	
 	wire[6:0] op = inst_i[6:0];
@@ -47,20 +47,70 @@ module id (
 
 		reg1_addr_o <= inst_i[19:15];
 		reg2_addr_o <= inst_i[24:20];
-
-		branch_pc_o <= {19'b0, inst_i[31:20], 1'b0} + pc_i;
 	end
 
 	// Alu
 	always @ (*) begin
-		if (op == `Itype) begin
-			imm_data_o <= {20'b0, inst_i[31:20]};
+		alu_lr_o <= 0;
+		alu_op_o <= funct3;
 
-			alu_lr_o <= 0;
-			alu_op_o <= funct3;
+		write_addr_o <= inst_i[11:7];
+	end
 
-			write_addr_o <= inst_i[11:7];
-		end
+	// imm
+	always @ (*) begin
+		case (op) 
+			`Itype : begin
+				imm_data_o <= {20{inst_i[31]}, inst_i[31:20]};
+			end
+			`Stype : begin
+				imm_data_o <= {20{inst_i[31]}, inst_i[31:25], inst_i[11:7]};
+			end
+			`Ltype : begin
+				imm_data_o <= {20{inst_i[31]}, inst_i[31:20]};
+			end
+			`JALR : begin
+				imm_data_o <= pc_i + 4;
+			end
+			`JAL : begin
+				imm_data_o <= pc_i + 4;
+			end
+			`LUI : begin
+				imm_data_o <= {inst_i[31:12], 12'b0};
+			end
+			`AUIPC : begin
+				imm_data_o <= {inst_i[31:12], 12'b0} + pc_i;
+			end
+			default : begin
+				imm_data_o <= `ZeroWord;
+			end
+		endcase
+	end
+
+	// branch imm
+	always @ (*) begin
+		case (op) 
+			`JALR : begin
+				branch_imm_o <= {20{inst_i[31]}, inst_i[31:20]};
+			end
+			`JAL : begin
+				branch_imm_o <= {12{inst_i[31]},
+								 inst_i[19:12],
+								 inst_i[20],
+								 inst_i[30:21],
+								 1'b0};
+			end
+			`Btype : begin
+				branch_imm_o <= {20{inst_i[31]}, 
+				 				 inst_i[7], 
+				 				 inst_i[30:25], 
+				 				 inst_i[11:8], 
+				 				 1'b0};
+			end
+			default : begin
+				branch_imm_o <= `ZeroWord;
+			end
+		endcase
 	end
 
 endmodule

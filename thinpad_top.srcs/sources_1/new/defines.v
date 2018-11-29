@@ -36,6 +36,7 @@
 `define EXE_SRA  4'b1101
 `define EXE_OR   4'b0110
 `define EXE_AND  4'b0111
+`define EXE_IMM  4'b1111
 
 // inst type
 `define Rtype 7'b0110011

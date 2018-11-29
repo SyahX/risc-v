@@ -14,16 +14,25 @@ module risc (
 	// pc_reg
 	wire[`InstAddrBus] pc;
 	wire[`InstAddrBus] next_pc_i;
-	wire[`InstAddrBus] mem_branch_pc_i;
 	
-	wire[`InstAddrBus] next_pc_o;
 	assign next_pc_i = pc + 4;
-
-	wire mem_ctrl_pc_src_o;
 
 	// id
 	wire[`InstAddrBus] id_pc_i;
 	wire[`InstBus] id_inst_i;
+	wire[`RegAddrBus] id_reg1_addr_i;
+	wire[`RegAddrBus] id_reg2_addr_i;
+	assign id_reg1_addr_i = inst_i[19:15];
+	assign id_reg2_addr_i = inst_i[24:20];
+
+	wire[`InstAddrBus] branch_imm;
+	wire[1:0] id_alu_mux1;
+	wire[1:0] id_alu_mux2;
+	wire[`RegBus] id_reg1_data;
+	wire[`RegBus] id_reg2_data;
+	wire[`InstAddrBus] branch_pc;
+	wire ctrl_pc_src;
+	wire ctrl_hold;
 
 	wire[`RegBus] id_reg1_data_i;
 	wire[`RegBus] id_reg2_data_i;
@@ -40,7 +49,6 @@ module risc (
 
 	wire id_ctrl_wb_RegWrite_o;
 	wire id_ctrl_wb_Mem2Reg_o;
-	wire id_ctrl_mem_branch_o;
 	wire id_ctrl_mem_read_o;
 	wire id_ctrl_mem_write_o;
 	wire id_ctrl_ex_AluSrc_o; 
@@ -49,11 +57,15 @@ module risc (
 	//ex
 	wire ex_ctrl_wb_RegWrite_i;
 	wire ex_ctrl_wb_Mem2Reg_i;
-	wire ex_ctrl_mem_branch_i;
 	wire ex_ctrl_mem_read_i;
 	wire ex_ctrl_mem_write_i;
 	wire ex_ctrl_ex_AluSrc_i; 
 	wire[`CtrlAluOpBus] ex_ctrl_ex_AluOp_i;
+
+	wire[1:0] ex_alu_mux1;
+	wire[1:0] ex_alu_mux2;
+	wire[`RegBus] ex_reg1_data;
+	wire[`RegBus] ex_reg2_data;
 	
 	wire[`InstAddrBus] ex_pc_i;
 	wire[`RegBus] ex_reg1_data_i;
@@ -63,8 +75,6 @@ module risc (
 	wire[`AluOpBus] ex_alu_op_i;
 	wire[`RegAddrBus] ex_write_addr_i;
 
-	wire[`InstAddrBus] ex_branch_pc_o;
-	wire ex_alu_branch_take_o;
 	wire[`RegBus] ex_alu_result_o;
 	wire[`RegBus] ex_mem_write_data_o;
 
@@ -72,14 +82,12 @@ module risc (
 	
 	wire ex_ctrl_wb_RegWrite_o;
     wire ex_ctrl_wb_Mem2Reg_o;
-    wire ex_ctrl_mem_branch_o;
     wire ex_ctrl_mem_read_o;
     wire ex_ctrl_mem_write_o;
     wire[`RegAddrBus] ex_write_addr_o;
 
 	assign ex_ctrl_wb_RegWrite_o = ex_ctrl_wb_RegWrite_i;
 	assign ex_ctrl_wb_Mem2Reg_o = ex_ctrl_wb_Mem2Reg_i;
-	assign ex_ctrl_mem_branch_o = ex_ctrl_mem_branch_i;
 	assign ex_ctrl_mem_read_o = ex_ctrl_mem_read_i;
 	assign ex_ctrl_mem_write_o = ex_ctrl_mem_write_i;
 	assign ex_write_addr_o = ex_write_addr_i;
@@ -87,10 +95,8 @@ module risc (
 	// mem
 	wire mem_ctrl_wb_RegWrite_i;
 	wire mem_ctrl_wb_Mem2Reg_i;
-	wire mem_ctrl_mem_branch_i;
 	wire mem_ctrl_mem_read_i;
 	wire mem_ctrl_mem_write_i;
-	wire mem_alu_branch_take_i;
 	wire[`RegBus] mem_alu_result_i;
 	wire[`RegBus] mem_mem_write_data_i;
 	wire[`RegAddrBus] mem_write_addr_i;
@@ -99,11 +105,12 @@ module risc (
     wire mem_ctrl_wb_RegWrite_o;
     wire mem_ctrl_wb_Mem2Reg_o;
     wire[`RegAddrBus] mem_write_addr_o;
+	wire[`RegBus] mem_mem_read_data_o;
+	wire[`RegBus] mem_alu_result_o;
+
 	assign mem_ctrl_wb_RegWrite_o = mem_ctrl_wb_RegWrite_i;
 	assign mem_ctrl_wb_Mem2Reg_o = mem_ctrl_wb_Mem2Reg_i;
 	assign mem_write_addr_o = mem_write_addr_i;
-	wire[`RegBus] mem_mem_read_data_o;
-	wire[`RegBus] mem_alu_result_o;
 
 	// wb
 	wire wb_ctrl_wb_RegWrite_i;
@@ -118,12 +125,12 @@ module risc (
 		.clk(clk),
 		.rst(rst),
 
-		.ctrl_pc_src_i(mem_ctrl_pc_src_o),
+		.pc_hold_i(ctrl_hold),
+		.ctrl_pc_src_i(ctrl_pc_src),
 		.pc_i(next_pc_i),
-		.branch_pc_i(mem_branch_pc_i),
+		.branch_pc_i(branch_pc),
 
 		.pc_o(pc),
-		//.next_pc_o(next_pc_o),
 		.rom_ce_o(rom_ce_o)
 	);
 
@@ -133,11 +140,26 @@ module risc (
 		.clk(clk),
 		.rst(rst),
 
+		.ctrl_if_flush(ctrl_pc_src),
+		.if_id_hold(ctrl_hold),
 		.if_pc(pc),
 		.if_inst(rom_data_i),
 
 		.id_pc(id_pc_i),
 		.id_inst(id_inst_i)
+	);
+
+	detection detection0(
+		.inst_i(id_inst_i),
+		.ex_ctrl_mem_read_i(ex_ctrl_mem_read_o),
+		.ex_ctrl_wb_Mem2Reg_i(ex_ctrl_wb_Mem2Reg_o),
+		.ex_write_addr_i(ex_write_addr_o),
+
+		.mem_ctrl_mem_read_i(mem_ctrl_mem_read_o),
+		.mem_ctrl_wb_Mem2Reg_i(mem_ctrl_wb_Mem2Reg_o),
+		.mem_write_addr_i(mem_write_addr_o),
+
+		.ctrl_detection_o(ctrl_hold)
 	);
 
 	control ctrl0(
@@ -146,7 +168,6 @@ module risc (
 
 		.ctrl_wb_RegWrite_o(id_ctrl_wb_RegWrite_o),
 		.ctrl_wb_Mem2Reg_o(id_ctrl_wb_Mem2Reg_o),
-		.ctrl_mem_branch_o(id_ctrl_mem_branch_o),
 		.ctrl_mem_read_o(id_ctrl_mem_read_o),
 		.ctrl_mem_write_o(id_ctrl_mem_write_o),
 		.ctrl_ex_AluSrc_o(id_ctrl_ex_AluSrc_o),
@@ -170,6 +191,7 @@ module risc (
 		.reg2_addr_o(id_reg2_addr_o),
 
 		.imm_data_o(id_imm_data_o),
+		.branch_imm_o(branch_imm),
 
 		.alu_lr_o(id_alu_lr_o),
 		.alu_op_o(id_alu_op_o),
@@ -190,13 +212,54 @@ module risc (
 		.write_data(wb_write_data_o)
 	);
 
+	forward control_forward(
+		.id_reg1_addr_i(id_reg1_addr_i),
+		.id_reg2_addr_i(id_reg2_addr_i),
+		
+		.mem_ctrl_wb_RegWrite_i(mem_ctrl_wb_RegWrite_o),
+		.mem_write_addr_i(mem_write_addr_o),
+		
+		.wb_ctrl_wb_RegWrite_i(wb_ctrl_wb_RegWrite_o),
+		.wb_write_addr_i(wb_write_addr_o),
+		
+		.alu_mux1_o(id_alu_mux1),
+		.alu_mux2_o(id_alu_mux2)
+	);
+
+	data_mux id_data_mux(
+		.id_reg1_data_i(id_reg1_data_o),
+		.mem_reg1_data_i(mem_alu_result_i),
+		.wb_reg1_data_i(wb_write_data_o),
+
+		.id_reg2_data_i(id_reg2_data_o),
+		.mem_reg2_data_i(mem_alu_result_i),
+		.wb_reg2_data_i(wb_write_data_o),
+
+		.alu_mux1_i(id_alu_mux1),
+		.alu_mux2_i(id_alu_mux2),
+
+		.reg1_data_o(id_reg1_data),
+		.reg2_data_o(id_reg2_data)
+	);
+
+	compare compare0(
+		.inst_i(id_inst_i),
+		.reg1_data_i(id_reg1_data),
+		.reg2_data_i(id_reg2_data),
+
+		.pc_i(id_pc_i),
+		.branch_imm_i(branch_imm),
+		.branch_pc_o(branch_pc),
+
+		.ctrl_pc_src_o(ctrl_pc_src)
+	);
+
 	id_ex id_ex0(
 		.clk(clk),
 		.rst(rst),
 
 		.ctrl_wb_RegWrite_i(id_ctrl_wb_RegWrite_o),
 		.ctrl_wb_Mem2Reg_i(id_ctrl_wb_Mem2Reg_o),
-		.ctrl_mem_branch_i(id_ctrl_mem_branch_o),
 		.ctrl_mem_read_i(id_ctrl_mem_read_o),
 		.ctrl_mem_write_i(id_ctrl_mem_write_o),
 		.ctrl_ex_AluSrc_i(id_ctrl_ex_AluSrc_o),
@@ -216,7 +279,6 @@ module risc (
 
 		.ctrl_wb_RegWrite_o(ex_ctrl_wb_RegWrite_i),
 		.ctrl_wb_Mem2Reg_o(ex_ctrl_wb_Mem2Reg_i),
-		.ctrl_mem_branch_o(ex_ctrl_mem_branch_i),
 		.ctrl_mem_read_o(ex_ctrl_mem_read_i),
 		.ctrl_mem_write_o(ex_ctrl_mem_write_i),
 		.ctrl_ex_AluSrc_o(ex_ctrl_ex_AluSrc_i),
@@ -244,7 +306,35 @@ module risc (
 		.alu_ctrl_o(alu_ctrl)
 	);
 
-	
+	forward ex_forward(
+		.id_reg1_addr_i(id_reg1_addr_i),
+		.id_reg2_addr_i(id_reg2_addr_i),
+		
+		.mem_ctrl_wb_RegWrite_i(mem_ctrl_wb_RegWrite_o),
+		.mem_write_addr_i(mem_write_addr_o),
+		
+		.wb_ctrl_wb_RegWrite_i(wb_ctrl_wb_RegWrite_o),
+		.wb_write_addr_i(wb_write_addr_o),
+		
+		.alu_mux1_o(ex_alu_mux1),
+		.alu_mux2_o(ex_alu_mux2)
+	);
+
+	data_mux ex_data_mux(
+		.id_reg1_data_i(ex_reg1_data_i),
+		.mem_reg1_data_i(mem_alu_result_i),
+		.wb_reg1_data_i(wb_write_data_o),
+
+		.id_reg2_data_i(ex_reg2_data_i),
+		.mem_reg2_data_i(mem_alu_result_i),
+		.wb_reg2_data_i(wb_write_data_o),
+
+		.alu_mux1_i(ex_alu_mux1),
+		.alu_mux2_i(ex_alu_mux2),
+
+		.reg1_data_o(ex_reg1_data),
+		.reg2_data_o(ex_reg2_data)
+	);
 
 	ex ex0(
 		.rst(rst),
@@ -255,14 +345,11 @@ module risc (
 
 		.pc_i(ex_pc_i),
 
-		.reg1_data_i(ex_reg1_data_i),
-		.reg2_data_i(ex_reg2_data_i),
+		.reg1_data_i(ex_reg1_data),
+		.reg2_data_i(ex_reg2_data),
 
 		.imm_data_i(ex_imm_data_i),
 
-		.branch_pc_o(ex_branch_pc_o),
-
-		.alu_branch_take_o(ex_alu_branch_take_o),
 		.alu_result_o(ex_alu_result_o),
 
 		.mem_write_data_o(ex_mem_write_data_o)
@@ -274,13 +361,9 @@ module risc (
 	
 		.ctrl_wb_RegWrite_i(ex_ctrl_wb_RegWrite_o),
 		.ctrl_wb_Mem2Reg_i(ex_ctrl_wb_Mem2Reg_o),
-		.ctrl_mem_branch_i(ex_ctrl_mem_branch_o),
 		.ctrl_mem_read_i(ex_ctrl_mem_read_o),
 		.ctrl_mem_write_i(ex_ctrl_mem_write_o),
 
-		.branch_pc_i(ex_branch_pc_o),
-
-		.alu_branch_take_i(ex_alu_branch_take_o),
 		.alu_result_i(ex_alu_result_o),
 
 		.mem_write_data_i(ex_mem_write_data_o),
@@ -289,13 +372,9 @@ module risc (
 
 		.ctrl_wb_RegWrite_o(mem_ctrl_wb_RegWrite_i),
 		.ctrl_wb_Mem2Reg_o(mem_ctrl_wb_Mem2Reg_i),
-		.ctrl_mem_branch_o(mem_ctrl_mem_branch_i),
 		.ctrl_mem_read_o(mem_ctrl_mem_read_i),
 		.ctrl_mem_write_o(mem_ctrl_mem_write_i),
 
-		.branch_pc_o(mem_branch_pc_i),
-
-		.alu_branch_take_o(mem_alu_branch_take_i),
 		.alu_result_o(mem_alu_result_i),
 
 		.mem_write_data_o(mem_mem_write_data_i),
@@ -306,20 +385,16 @@ module risc (
 	mem mem0(
 		.rst(rst),
 
-		.ctrl_mem_branch_i(mem_ctrl_mem_branch_i),
 		.ctrl_mem_read_i(mem_ctrl_mem_read_i),
 		.ctrl_mem_write_i(mem_ctrl_mem_write_i),
 
-		.alu_branch_take_i(mem_alu_branch_take_i),
 		.alu_result_i(mem_alu_result_i),
 
 		.mem_write_data_i(mem_mem_write_data_i),
 
 		.mem_read_data_o(mem_mem_read_data_o),
 
-		.alu_result_o(mem_alu_result_o),
-
-		.ctrl_pc_src_o(mem_ctrl_pc_src_o)
+		.alu_result_o(mem_alu_result_o)
 	);
 
 	

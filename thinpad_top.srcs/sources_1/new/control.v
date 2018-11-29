@@ -14,7 +14,6 @@ module control (
 	output reg 					ctrl_mem_write_o,
 	output reg					ctrl_ex_AluSrc_o, 
 	output reg[`CtrlAluOpBus] 	ctrl_ex_AluOp_o  // I & R & jalr: 00, S & L: 10, B: 11
-	//output reg 					ctrl_if_flush_o
 );
 	wire[6:0] op = inst_i[6:0];
 	wire[2:0] funct3 = inst_i[14:12];
@@ -44,7 +43,7 @@ module control (
 			`JALR:
 				begin
 				    ctrl_ex_AluSrc_o <= `Asserted;
-				    ctrl_ex_AluOp_o <= 2'b00;
+				    ctrl_ex_AluOp_o <= 2'b01;
 				    ctrl_mem_read_o <= `DeAsserted;
 				    ctrl_mem_write_o <= `DeAsserted;
 				    ctrl_wb_RegWrite_o <= `Asserted;

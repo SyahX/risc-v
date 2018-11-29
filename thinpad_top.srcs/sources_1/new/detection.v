@@ -8,9 +8,11 @@ module detection(
 	input wire 					ex_ctrl_wb_Mem2Reg_i,
 	input wire[`RegAddrBus]		ex_write_addr_i,
 
-	output reg 					pc_hold_o,
-	output reg 					if_id_hold_o,
-	output reg 					ctrl_mux_o
+    input wire                  mem_ctrl_mem_read_i,
+    input wire                  mem_ctrl_wb_Mem2Reg_i,
+    input wire[`RegAddrBus]     mem_write_addr_i,
+
+	output reg 					ctrl_detection_o,
 );
 	wire[6:0] op = inst_i[6:0];
 	wire[4:0] rs1 = inst_i[19:15];
@@ -22,14 +24,16 @@ module detection(
         	(((op == `Btype || op == `Stype || op == `Rtype) &&
         	  rs2 == ex_write_addr_i) || 
         	 rs1 == ex_write_addr_i)) begin
-        	pc_hold_o <= `Asserted;
-        	if_id_hold_o <= `Asserted;
-        	ctrl_mux_o <= `Asserted;	 	
+        	ctrl_detection_o <= `Asserted;	 	
         end
+        else if (op == `Btype &&
+                 mem_ctrl_mem_read_i == `Asserted &&
+                 mem_ctrl_wb_Mem2Reg_i == `Asserted &&
+                 (rs1 == mem_write_addr_i || rs2 == mem_write_addr_i)) begin
+            ctrl_detection_o <= `Asserted;
+        end 
         else begin
-        	pc_hold_o <= `DeAsserted;
-        	if_id_hold_o <= `DeAsserted;
-        	ctrl_mux_o <= `DeAsserted;	 
+        	ctrl_detection_o <= `DeAsserted;	 
         end
     end
 

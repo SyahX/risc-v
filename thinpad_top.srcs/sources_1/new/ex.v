@@ -28,18 +28,20 @@ module ex (
 	output wire[`RegBus]		mem_write_data_o
 );
     wire[`RegBus] reg1;
-    wire[`RegBus] reg2;
+    reg[`RegBus] reg2;
 	assign reg1 = reg1_data_i;
 	assign mem_write_data_o = reg2_data_i;
 	
 	always @ (*) begin
 		if (ctrl_ex_AluSrc_i == `Asserted) begin
-			reg2 = imm_data_i[`RegBus];
+			reg2 <= imm_data_i[`RegBus];
 		end
 		else begin
-			reg2 = reg2_data_i[`RegBus];
+			reg2 <= reg2_data_i[`RegBus];
 		end
+	end
 
+	always @ (*) begin
 		case (alu_ctrl_i)
 			`EXE_ADD : begin
 				alu_result_o <= reg1 + reg2;
@@ -51,7 +53,12 @@ module ex (
 				alu_result_o <= reg1 << reg2[4:0];
 			end
 			`EXE_SLT : begin
-				if 
+				if ((reg1 + (~reg2) + 1)[31]) begin
+					alu_result_o <= 32'b0;
+				end 
+				else begin
+					alu_result_o <= 32'b1;
+				end
 			end
 			`EXE_SLTU : begin
 				if (reg1 < reg2) begin
@@ -75,6 +82,9 @@ module ex (
 			end
 			`EXE_AND : begin
 				alu_result_o <= reg1 & reg2;
+			end
+			`EXE_IMM : begin
+				alu_result_o <= reg2;
 			end
 			default : begin
 				alu_result_o <= `ZeroWord;
