@@ -47,7 +47,12 @@ module id (
 
 	// Alu
 	always @ (*) begin
-		alu_lr_o <= 0;
+	    if (op == `Rtype || (op == `Itype && funct3 == 3'b101)) begin
+		    alu_lr_o <= inst_i[30];
+		end
+		else begin
+		    alu_lr_o <= 1'b0;
+		end
 		alu_op_o <= funct3;
 
 		write_addr_o <= inst_i[11:7];

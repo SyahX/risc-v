@@ -57,10 +57,10 @@ module ex (
 			end
 			`EXE_SLT : begin
 				if (sign[31]) begin
-					alu_result_o <= 32'b0;
+					alu_result_o <= 32'b1;
 				end 
 				else begin
-					alu_result_o <= 32'b1;
+					alu_result_o <= 32'b0;
 				end
 			end
 			`EXE_SLTU : begin

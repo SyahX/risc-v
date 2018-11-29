@@ -20,11 +20,13 @@ module forward (
 	output reg[1:0]				alu_mux2_o	
 );
 	always @ (*) begin
-		if (mem_write_addr_i == id_reg1_addr_i &&
+		if (mem_write_addr_i != 5'b00000 &&
+		    mem_write_addr_i == id_reg1_addr_i &&
 			mem_ctrl_wb_RegWrite_i == `Asserted) begin
 			alu_mux1_o <= 2'b01;
 		end
-		else if (wb_write_addr_i == id_reg1_addr_i &&
+		else if (wb_write_addr_i != 5'b00000 &&
+		         wb_write_addr_i == id_reg1_addr_i &&
 				 wb_ctrl_wb_RegWrite_i == `Asserted) begin
 			alu_mux1_o <= 2'b10;
 		end
@@ -34,11 +36,13 @@ module forward (
 	end
 
 	always @ (*) begin
-		if (mem_write_addr_i == id_reg2_addr_i &&
+		if (mem_write_addr_i != 5'b00000 &&
+		    mem_write_addr_i == id_reg2_addr_i &&
 			mem_ctrl_wb_RegWrite_i == `Asserted) begin
 			alu_mux2_o <= 2'b01;
 		end
-		else if (wb_write_addr_i == id_reg2_addr_i &&
+		else if (wb_write_addr_i != 5'b00000 &&
+		         wb_write_addr_i == id_reg2_addr_i &&
 				 wb_ctrl_wb_RegWrite_i == `Asserted) begin
 			alu_mux2_o <= 2'b10;
 		end

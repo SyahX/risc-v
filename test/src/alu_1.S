@@ -15,7 +15,7 @@ _start:
     sub x3, x1, x2
     sub x3, x3, x3
     ori x4, x0, 15
-    addi x5, x4, 27
+    andi x5, x4, 27
     xor x6, x4, x5
     slti x7, x6, 4
     slti x7, x6, 5
