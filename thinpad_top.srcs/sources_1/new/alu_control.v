@@ -18,13 +18,16 @@ module alu_control (
 
 	always @ (*) begin
 		case (ctrl_ex_AluOp_i)
-			`AluOp_Itype : begin
+			`AluOp_Itype : 
+			begin
 				alu_ctrl_o <= {alu_lr_i, alu_op_i};
 			end
-			`AluOp_Rtype : begin
+			`AluOp_Rtype : 
+			begin
 				alu_ctrl_o <= {alu_lr_i, alu_op_i};
 			end
-			default : begin
+			default : 
+			begin
 				alu_ctrl_o <= `EXE_NOP;
 			end
 		endcase

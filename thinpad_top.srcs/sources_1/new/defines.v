@@ -42,6 +42,11 @@
 `define Itype 7'b0010011
 `define Btype 7'b1100011
 `define Stype 7'b0100011
+`define Ltype 7'b0000011
+`define JALR  7'b1100111
+`define JAL   7'b1101111
+`define LUI   7'b0110111
+`define AUIPC 7'b0010111
 
 // branch
 `define BEQ 3'b000

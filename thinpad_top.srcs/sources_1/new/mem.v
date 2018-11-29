@@ -19,7 +19,7 @@ module mem (
 	output reg[`RegBus]			mem_read_data_o,
 
 	// output 
-	output reg[`RegBus]			alu_result_o,
+	output reg[`RegBus]			alu_result_o
 
 );
 	
