@@ -17,6 +17,8 @@ module compare (
 );
 	wire[6:0] op = inst_i[6:0];
 	wire[2:0] funct3 = inst_i[14:12];
+	wire[31:0] sign;
+	assign sign = (reg1_data_i + (~reg2_data_i) + 1);
 	
 	// branch pc
 	always @ (*) begin
@@ -24,7 +26,7 @@ module compare (
 			branch_pc_o <= branch_imm_i + pc_i;
 		end 
 		else if (op == `JALR) begin
-			branch_pc_o <= {(branch_imm_i + reg1_data_i)[31:1], 1'b0};
+			branch_pc_o <= (branch_imm_i + reg1_data_i) & 32'hfffffffe;
 		end
 	end
 
@@ -47,7 +49,7 @@ module compare (
 					end
 				end
 				`BLT : begin
-					if ((reg1_data_i + (~reg2_data_i) + 1)[31]) begin
+					if (sign[31]) begin
 						ctrl_pc_src_o <= 32'b0;
 					end 
 					else begin
@@ -55,7 +57,7 @@ module compare (
 					end
 				end
 				`BGE : begin
-					if ((reg1_data_i + (~reg2_data_i) + 1)[31]) begin
+					if (sign[31]) begin
 						ctrl_pc_src_o <= 32'b1;
 					end 
 					else begin

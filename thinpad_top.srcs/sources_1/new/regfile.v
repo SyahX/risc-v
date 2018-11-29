@@ -35,7 +35,7 @@ reg[`RegBus] regs[0 : `RegNum - 1];
 
 	// read register 1
 	always @ (*) begin
-		if (rst == `DeAsserted) begin
+		if (rst == `Asserted) begin
 			read_data_1 <= `ZeroWord;
 		end
 		else if (read_addr_1 == `RegNumLog2'h0) begin
@@ -53,7 +53,7 @@ reg[`RegBus] regs[0 : `RegNum - 1];
 	// read register 2
 	always @ (*)
 	begin
-		if (rst == `DeAsserted) begin
+		if (rst == `Asserted) begin
 			read_data_2 <= `ZeroWord;
 		end
 		else if (read_addr_2 == `RegNumLog2'h0) begin

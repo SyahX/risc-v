@@ -4,16 +4,13 @@
 
 module id (
 	input wire rst,
-
-	input wire[`InstAddrBus]	pc_i,
+    
+    input wire[`InstAddrBus]    pc_i,
 	input wire[`InstBus]		inst_i,
 
 	// get data from regfile
 	input wire[`RegBus]			reg1_data_i,
 	input wire[`RegBus]			reg2_data_i,					
-
-	// output pc
-	output reg[`InstAddrBus]	pc_o,
 
 	// para to regfile
 	output reg[`RegBus]			reg1_data_o,
@@ -40,7 +37,6 @@ module id (
 
 	// register
 	always @ (*) begin
-		pc_o <= pc_i;
 
 		reg1_data_o <= reg1_data_i;
 		reg2_data_o <= reg2_data_i;
@@ -61,13 +57,15 @@ module id (
 	always @ (*) begin
 		case (op) 
 			`Itype : begin
-				imm_data_o <= {20{inst_i[31]}, inst_i[31:20]};
+				imm_data_o <= {{20{inst_i[31]}}, inst_i[31:20]};
 			end
 			`Stype : begin
-				imm_data_o <= {20{inst_i[31]}, inst_i[31:25], inst_i[11:7]};
+				imm_data_o <= {{20{inst_i[31]}}, 
+				               inst_i[31:25], 
+				               inst_i[11:7]};
 			end
 			`Ltype : begin
-				imm_data_o <= {20{inst_i[31]}, inst_i[31:20]};
+				imm_data_o <= {{20{inst_i[31]}}, inst_i[31:20]};
 			end
 			`JALR : begin
 				imm_data_o <= pc_i + 4;
@@ -91,17 +89,17 @@ module id (
 	always @ (*) begin
 		case (op) 
 			`JALR : begin
-				branch_imm_o <= {20{inst_i[31]}, inst_i[31:20]};
+				branch_imm_o <= {{20{inst_i[31]}}, inst_i[31:20]};
 			end
 			`JAL : begin
-				branch_imm_o <= {12{inst_i[31]},
+				branch_imm_o <= {{12{inst_i[31]}},
 								 inst_i[19:12],
 								 inst_i[20],
 								 inst_i[30:21],
 								 1'b0};
 			end
 			`Btype : begin
-				branch_imm_o <= {20{inst_i[31]}, 
+				branch_imm_o <= {{20{inst_i[31]}}, 
 				 				 inst_i[7], 
 				 				 inst_i[30:25], 
 				 				 inst_i[11:8], 

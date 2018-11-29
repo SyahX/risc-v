@@ -56,3 +56,5 @@
 `define BGE 3'b101
 `define BLTU 3'b110
 `define BGEU 3'b111
+
+`define MemOpBus 2:0

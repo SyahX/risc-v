@@ -1,4 +1,4 @@
-timescale 1ns / 1ps
+`timescale 1ns / 1ps
 
 `include "defines.v"
 
@@ -12,7 +12,7 @@ module detection(
     input wire                  mem_ctrl_wb_Mem2Reg_i,
     input wire[`RegAddrBus]     mem_write_addr_i,
 
-	output reg 					ctrl_detection_o,
+	output reg 					ctrl_detection_o
 );
 	wire[6:0] op = inst_i[6:0];
 	wire[4:0] rs1 = inst_i[19:15];

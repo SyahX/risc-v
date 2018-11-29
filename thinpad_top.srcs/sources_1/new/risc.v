@@ -22,8 +22,8 @@ module risc (
 	wire[`InstBus] id_inst_i;
 	wire[`RegAddrBus] id_reg1_addr_i;
 	wire[`RegAddrBus] id_reg2_addr_i;
-	assign id_reg1_addr_i = inst_i[19:15];
-	assign id_reg2_addr_i = inst_i[24:20];
+	assign id_reg1_addr_i = id_inst_i[19:15];
+	assign id_reg2_addr_i = id_inst_i[24:20];
 
 	wire[`InstAddrBus] branch_imm;
 	wire[1:0] id_alu_mux1;
@@ -37,7 +37,6 @@ module risc (
 	wire[`RegBus] id_reg1_data_i;
 	wire[`RegBus] id_reg2_data_i;
 
-	wire[`InstAddrBus] id_pc_o;
 	wire[`RegAddrBus] id_reg1_addr_o;
 	wire[`RegAddrBus] id_reg2_addr_o;
 	wire[`RegBus] id_reg1_data_o;
@@ -62,12 +61,13 @@ module risc (
 	wire ex_ctrl_ex_AluSrc_i; 
 	wire[`CtrlAluOpBus] ex_ctrl_ex_AluOp_i;
 
+    wire[`RegAddrBus] ex_reg1_addr_i;
+	wire[`RegAddrBus] ex_reg2_addr_i;
 	wire[1:0] ex_alu_mux1;
 	wire[1:0] ex_alu_mux2;
 	wire[`RegBus] ex_reg1_data;
 	wire[`RegBus] ex_reg2_data;
 	
-	wire[`InstAddrBus] ex_pc_i;
 	wire[`RegBus] ex_reg1_data_i;
 	wire[`RegBus] ex_reg2_data_i;
 	wire[`ImmBus] ex_imm_data_i;
@@ -155,7 +155,7 @@ module risc (
 		.ex_ctrl_wb_Mem2Reg_i(ex_ctrl_wb_Mem2Reg_o),
 		.ex_write_addr_i(ex_write_addr_o),
 
-		.mem_ctrl_mem_read_i(mem_ctrl_mem_read_o),
+		.mem_ctrl_mem_read_i(mem_ctrl_mem_read_i),
 		.mem_ctrl_wb_Mem2Reg_i(mem_ctrl_wb_Mem2Reg_o),
 		.mem_write_addr_i(mem_write_addr_o),
 
@@ -163,7 +163,6 @@ module risc (
 	);
 
 	control ctrl0(
-		.rst(rst),
 		.inst_i(id_inst_i),
 
 		.ctrl_wb_RegWrite_o(id_ctrl_wb_RegWrite_o),
@@ -177,13 +176,11 @@ module risc (
 	id id0(
 		.rst(rst),
 
-		.pc_i(id_pc_i),
+        .pc_i(id_pc_i),
 		.inst_i(id_inst_i),
 
 		.reg1_data_i(id_reg1_data_i),
 		.reg2_data_i(id_reg2_data_i),
-
-		.pc_o(id_pc_o),
 
 		.reg1_data_o(id_reg1_data_o),
 		.reg2_data_o(id_reg2_data_o),
@@ -219,8 +216,8 @@ module risc (
 		.mem_ctrl_wb_RegWrite_i(mem_ctrl_wb_RegWrite_o),
 		.mem_write_addr_i(mem_write_addr_o),
 		
-		.wb_ctrl_wb_RegWrite_i(wb_ctrl_wb_RegWrite_o),
-		.wb_write_addr_i(wb_write_addr_o),
+		.wb_ctrl_wb_RegWrite_i(wb_ctrl_wb_RegWrite_i),
+		.wb_write_addr_i(wb_write_addr_i),
 		
 		.alu_mux1_o(id_alu_mux1),
 		.alu_mux2_o(id_alu_mux2)
@@ -265,10 +262,11 @@ module risc (
 		.ctrl_ex_AluSrc_i(id_ctrl_ex_AluSrc_o),
 		.ctrl_ex_AluOp_i(id_ctrl_ex_AluOp_o),
 
-		.pc_i(id_pc_o),
-
 		.reg1_data_i(id_reg1_data_o),
 		.reg2_data_i(id_reg2_data_o),
+		
+		.reg1_addr_i(id_reg1_addr_i),
+		.reg2_addr_i(id_reg2_addr_i),
 
 		.imm_data_i(id_imm_data_o),
 
@@ -284,10 +282,11 @@ module risc (
 		.ctrl_ex_AluSrc_o(ex_ctrl_ex_AluSrc_i),
 		.ctrl_ex_AluOp_o(ex_ctrl_ex_AluOp_i),
 
-		.pc_o(ex_pc_i),
-
 		.reg1_data_o(ex_reg1_data_i),
 		.reg2_data_o(ex_reg2_data_i),
+		
+		.reg1_addr_o(ex_reg1_addr_i),
+        .reg2_addr_o(ex_reg2_addr_i),
 
 		.imm_data_o(ex_imm_data_i),
 
@@ -307,14 +306,14 @@ module risc (
 	);
 
 	forward ex_forward(
-		.id_reg1_addr_i(id_reg1_addr_i),
-		.id_reg2_addr_i(id_reg2_addr_i),
+		.id_reg1_addr_i(ex_reg1_addr_i),
+		.id_reg2_addr_i(ex_reg2_addr_i),
 		
 		.mem_ctrl_wb_RegWrite_i(mem_ctrl_wb_RegWrite_o),
 		.mem_write_addr_i(mem_write_addr_o),
 		
-		.wb_ctrl_wb_RegWrite_i(wb_ctrl_wb_RegWrite_o),
-		.wb_write_addr_i(wb_write_addr_o),
+		.wb_ctrl_wb_RegWrite_i(wb_ctrl_wb_RegWrite_i),
+		.wb_write_addr_i(wb_write_addr_i),
 		
 		.alu_mux1_o(ex_alu_mux1),
 		.alu_mux2_o(ex_alu_mux2)
@@ -342,8 +341,6 @@ module risc (
 		.ctrl_ex_AluSrc_i(ex_ctrl_ex_AluSrc_i),
 
 		.alu_ctrl_i(alu_ctrl),
-
-		.pc_i(ex_pc_i),
 
 		.reg1_data_i(ex_reg1_data),
 		.reg2_data_i(ex_reg2_data),

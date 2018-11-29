@@ -32,6 +32,9 @@ module ex (
 	assign reg1 = reg1_data_i;
 	assign mem_write_data_o = reg2_data_i;
 	
+	wire[`RegBus] sign;
+	assign sign = (reg1 + (~reg2) + 1);
+	
 	always @ (*) begin
 		if (ctrl_ex_AluSrc_i == `Asserted) begin
 			reg2 <= imm_data_i[`RegBus];
@@ -53,7 +56,7 @@ module ex (
 				alu_result_o <= reg1 << reg2[4:0];
 			end
 			`EXE_SLT : begin
-				if ((reg1 + (~reg2) + 1)[31]) begin
+				if (sign[31]) begin
 					alu_result_o <= 32'b0;
 				end 
 				else begin
