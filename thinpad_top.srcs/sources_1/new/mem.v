@@ -141,7 +141,6 @@ module mem (
 					end
 				end
 				`LW : begin
-					mem_ram_addr <= alu_result_i[21:2];
 					mem_read_data_o <= mem_ram_data_i;
 				end
 				`LBU : begin
