@@ -49,12 +49,22 @@
 `define LUI   7'b0110111
 `define AUIPC 7'b0010111
 
-// branch
+// funct3
 `define BEQ 3'b000
 `define BNE 3'b001
 `define BLT 3'b100
 `define BGE 3'b101
 `define BLTU 3'b110
 `define BGEU 3'b111
+
+`define LB 3'b000
+`define LH 3'b001
+`define LW 3'b010
+`define LBU 3'b100
+`define LHU 3'b101
+
+`define SB 3'b000
+`define SH 3'b001
+`define SW 3'b010
 
 `define MemOpBus 2:0
