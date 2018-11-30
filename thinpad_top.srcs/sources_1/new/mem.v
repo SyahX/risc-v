@@ -3,7 +3,7 @@
 `include "defines.v"
 
 module mem (
-	input wire rst,
+	input wire clk,
 	
 	// input control
 	input wire 					ctrl_mem_read_i,
@@ -17,7 +17,9 @@ module mem (
 
 	input wire[`MemOpBus]		mem_op_i,
 
-	input wire[`RegBus] 		mem_ram_data,
+	input wire[`RegBus] 		mem_ram_data_i,
+	
+	output reg[`RegBus] 		mem_ram_data_o,
 
 	output reg[`RamAddrBus] 	mem_ram_addr,
     output reg[3:0] 			mem_ram_be_n,
@@ -61,13 +63,13 @@ module mem (
 						~alu_result_i[1],
 						~alu_result_i[1],
 						alu_result_i[1],
-						alu_result_i[1],
+						alu_result_i[1]
 					};
 				end
 				`SW : begin
 					mem_ram_be_n <= 4'b0000;
 				end
-				defalut : begin
+				default : begin
 					mem_ram_be_n <= 4'b1111;
 				end
 			endcase
@@ -81,7 +83,7 @@ module mem (
 
 	always @ (negedge clk) begin
 		if (ctrl_mem_write_i == `Asserted) begin
-			mem_ram_data <= mem_write_data_i;
+			mem_ram_data_o <= mem_write_data_i;
 		end
 	end
 
@@ -91,59 +93,59 @@ module mem (
 				`LB : begin
 					case (alu_result_i[1:0])
 						2'b00: begin
-							mem_read_data_o <= {{24{mem_ram_data[7]}},
-												mem_ram_data[7:0]};
+							mem_read_data_o <= {{24{mem_ram_data_i[7]}},
+												mem_ram_data_i[7:0]};
 						end
 						2'b01: begin
-							mem_read_data_o <= {{24{mem_ram_data[15]}},
-												mem_ram_data[15:8]};
+							mem_read_data_o <= {{24{mem_ram_data_i[15]}},
+												mem_ram_data_i[15:8]};
 						end
 						2'b10: begin
-							mem_read_data_o <= {{24{mem_ram_data[23]}},
-												mem_ram_data[23:16]};
+							mem_read_data_o <= {{24{mem_ram_data_i[23]}},
+												mem_ram_data_i[23:16]};
 						end
 						2'b11: begin
-							mem_read_data_o <= {{24{mem_ram_data[31]}},
-												mem_ram_data[31:24]};
+							mem_read_data_o <= {{24{mem_ram_data_i[31]}},
+												mem_ram_data_i[31:24]};
 						end
 					endcase
 				end
 				`LH : begin
 					if (alu_result_i[1] == 1'b0) begin
-						mem_read_data_o <= {{16{mem_ram_data[15]}},
-											mem_ram_data[15:0]};
+						mem_read_data_o <= {{16{mem_ram_data_i[15]}},
+											mem_ram_data_i[15:0]};
 					end
 					else begin
-						mem_read_data_o <= {{16{mem_ram_data[31]}},
-											mem_ram_data[31:16]};
+						mem_read_data_o <= {{16{mem_ram_data_i[31]}},
+											mem_ram_data_i[31:16]};
 					end
 				end
 				`LW : begin
 					mem_ram_addr <= alu_result_i[21:2];
-					mem_read_data_o <= mem_ram_data;
+					mem_read_data_o <= mem_ram_data_i;
 				end
 				`LBU : begin
 					case (alu_result_i[1:0])
 						2'b00: begin
-							mem_read_data_o <= {24'b0, mem_ram_data[7:0]};
+							mem_read_data_o <= {24'b0, mem_ram_data_i[7:0]};
 						end
 						2'b01: begin
-							mem_read_data_o <= {24'b0, mem_ram_data[15:8]};
+							mem_read_data_o <= {24'b0, mem_ram_data_i[15:8]};
 						end
 						2'b10: begin
-							mem_read_data_o <= {24'b0, mem_ram_data[23:16]};
+							mem_read_data_o <= {24'b0, mem_ram_data_i[23:16]};
 						end
 						2'b11: begin
-							mem_read_data_o <= {24'b0, mem_ram_data[31:24]};
+							mem_read_data_o <= {24'b0, mem_ram_data_i[31:24]};
 						end
 					endcase
 				end
 				`LHU : begin
 					if (alu_result_i[1] == 1'b0) begin
-						mem_read_data_o <= {16'b0, mem_ram_data[15:0]};
+						mem_read_data_o <= {16'b0, mem_ram_data_i[15:0]};
 					end
 					else begin
-						mem_read_data_o <= {16'b0, mem_ram_data[31:16]};
+						mem_read_data_o <= {16'b0, mem_ram_data_i[31:16]};
 					end
 				end
 				default : begin

@@ -8,7 +8,7 @@ module risc (
 
 	input  wire[`RegBus]		rom_data_i,
 	output wire[`RegBus]		rom_addr_o,
-	output wire					rom_ce_o
+	output wire					rom_ce_o,
 
 	input wire[`RegBus] 		ram_data,
 
@@ -16,7 +16,7 @@ module risc (
     output wire[3:0] 			ram_be_n,
     output wire 				ram_ce_n,
     output wire 				ram_oe_n,
-    output wire 				ram_we_n,
+    output wire 				ram_we_n
 );
 	
 	// pc_reg
@@ -393,7 +393,7 @@ module risc (
 	);
 
 	mem mem0(
-		.rst(rst),
+		.clk(clk),
 
 		.ctrl_mem_read_i(mem_ctrl_mem_read_i),
 		.ctrl_mem_write_i(mem_ctrl_mem_write_i),
@@ -403,7 +403,8 @@ module risc (
 		.mem_write_data_i(mem_mem_write_data_i),
 
 		.mem_op_i(mem_mem_op_i),
-		.mem_ram_data(ram_data),
+		.mem_ram_data_i(ram_data),
+		.mem_ram_data_o(ram_data),
 
 		.mem_ram_addr(ram_addr),
 		.mem_ram_be_n(ram_be_n),

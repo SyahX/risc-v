@@ -68,3 +68,4 @@
 `define SW 3'b010
 
 `define MemOpBus 2:0
+`define RamAddrBus 19:0
