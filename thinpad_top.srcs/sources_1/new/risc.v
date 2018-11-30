@@ -162,6 +162,7 @@ module risc (
 		.inst_i(id_inst_i),
 		.ex_ctrl_mem_read_i(ex_ctrl_mem_read_o),
 		.ex_ctrl_wb_Mem2Reg_i(ex_ctrl_wb_Mem2Reg_o),
+		.ex_ctrl_wb_RegWrite_i(ex_ctrl_wb_RegWrite_o),
 		.ex_write_addr_i(ex_write_addr_o),
 
 		.mem_ctrl_mem_read_i(mem_ctrl_mem_read_i),

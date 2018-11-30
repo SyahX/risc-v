@@ -50,18 +50,18 @@ module compare (
 				end
 				`BLT : begin
 					if (sign[31]) begin
-						ctrl_pc_src_o <= 32'b1;
+						ctrl_pc_src_o <= `Asserted;
 					end 
 					else begin
-						ctrl_pc_src_o <= 32'b0;
+						ctrl_pc_src_o <= `DeAsserted;
 					end
 				end
 				`BGE : begin
 					if (sign[31]) begin
-						ctrl_pc_src_o <= 32'b0;
+						ctrl_pc_src_o <= `DeAsserted;
 					end 
 					else begin
-						ctrl_pc_src_o <= 32'b1;
+						ctrl_pc_src_o <= `Asserted;
 					end
 				end
 				`BLTU : begin

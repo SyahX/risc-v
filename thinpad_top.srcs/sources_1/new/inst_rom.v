@@ -8,9 +8,7 @@ module inst_rom(
     output reg[`InstBus] inst
 );
     reg[`InstBus] inst_mem[0:`InstMemNum-1];
-    initial $readmemh ( "/home/syah/code/risc-v/test/data/alu_1.data", inst_mem );
-    //initial $readmemh ( "/mnt/hgfs/Virtualbox/CPU/test/C4/inst_rom.data", inst_mem );
-    //initial $readmemh ( "D:/Virtualbox/CPU/test/C11/test1/inst_rom.data", inst_mem );
+    initial $readmemh ( "/home/syah/code/risc-v/test/data/branch.data", inst_mem );
     always @ (*) begin
         if (ce == `DeAsserted) begin
             inst <= `ZeroWord;

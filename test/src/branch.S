@@ -7,7 +7,7 @@ beq x2, x4, -4
 beq x1, x3, 4
 ori x30, x0, -1
 ori x5, x0, -1
-bne x5, x4, 16
+bne x5, x4, 18
 ori x30, x0, 2
 bge x1, x3, 4
 ori x30, x0, -1
