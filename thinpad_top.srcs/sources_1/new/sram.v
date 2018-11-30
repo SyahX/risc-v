@@ -8,8 +8,9 @@ module sram (
     input wire 				ram_ce_n,
     input wire 				ram_oe_n,
     input wire 				ram_we_n,
+    input wire[`RegBus] 	ram_data_i,
 
-    output reg[`RegBus] 	ram_data
+    output reg[`RegBus] 	ram_data_o
 );
 	
 	reg[7:0]  ram3[0:1048575];
@@ -20,16 +21,16 @@ module sram (
 	always @ (*) begin
 		if (ram_ce_n == `DeAsserted && ram_we_n == `DeAsserted) begin
 			if (ram_be_n[3] == 1'b0) begin
-		    	ram3[ram_addr] <= ram_data[31:24];
+		    	ram3[ram_addr] <= ram_data_i[31:24];
 		    end
 			if (ram_be_n[2] == 1'b0) begin
-		    	ram2[ram_addr] <= ram_data[23:16];
+		    	ram2[ram_addr] <= ram_data_i[23:16];
 		    end
 		    if (ram_be_n[1] == 1'b0) begin
-		    	ram1[ram_addr] <= ram_data[15:8];
+		    	ram1[ram_addr] <= ram_data_i[15:8];
 		    end
 			if (ram_be_n[0] == 1'b0) begin
-		    	ram0[ram_addr] <= ram_data[7:0];
+		    	ram0[ram_addr] <= ram_data_i[7:0];
 		    end			   	    
 		end
 	end
@@ -38,12 +39,12 @@ module sram (
 		if (ram_ce_n == `DeAsserted && 
 			ram_we_n == `Asserted &&
 			ram_oe_n == `DeAsserted) begin
-		    ram_data <= {ram3[ram_addr],
-		                 ram2[ram_addr],
-		                 ram1[ram_addr],
-		                 ram0[ram_addr]};
+		    ram_data_o = {ram3[ram_addr],
+		                  ram2[ram_addr],
+		                  ram1[ram_addr],
+		                  ram0[ram_addr]};
 		end else begin
-	        ram_data <= 32'bz;
+	        ram_data_o <= 32'bz;
 		end
 	end		
 

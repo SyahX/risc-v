@@ -41,7 +41,8 @@ module risc_min_sopc(
     );
 
     sram sram0(
-        .ram_data(ram_data),
+        .ram_data_i(ram_data),
+        .ram_data_o(ram_data),
 
         .ram_addr(ram_addr),
         .ram_be_n(ram_be_n),

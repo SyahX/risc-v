@@ -4,16 +4,16 @@
 
 module inst_rom(
     input wire ce,
-    input wire[`InstAddrBus] addr,
+    input wire[19:0] addr,
     output reg[`InstBus] inst
 );
-    reg[`InstBus] inst_mem[0:`InstMemNum-1];
-    initial $readmemh ( "/home/syah/code/risc-v/test/data/branch.data", inst_mem );
+    reg[`InstBus] inst_mem[0:1048575];
+    initial $readmemh ( "/home/syah/code/risc-v/test/data/test.data", inst_mem );
     always @ (*) begin
-        if (ce == `DeAsserted) begin
+        if (ce == `Asserted) begin
             inst <= `ZeroWord;
         end else begin
-            inst <= inst_mem[addr[`InstMemNumLog2+1:2]];
+            inst <= inst_mem[addr];
         end
     end
 endmodule

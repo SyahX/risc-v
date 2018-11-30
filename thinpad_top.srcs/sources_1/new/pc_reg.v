@@ -17,16 +17,16 @@ module pc_reg (
 );
     always @ (posedge clk) begin
         if (rst == `Asserted) begin
-            rom_ce_o <= `DeAsserted;
+            rom_ce_o <= `Asserted;
         end
         else begin
-            rom_ce_o <= `Asserted;
+            rom_ce_o <= `DeAsserted;
         end
     end
 
 	always @ (posedge clk) begin
 		if (pc_hold_i == `DeAsserted) begin
-			if (rom_ce_o == `DeAsserted) begin
+			if (rom_ce_o == `Asserted) begin
 				pc_o <= 32'h00000000;
 			end
 			else begin

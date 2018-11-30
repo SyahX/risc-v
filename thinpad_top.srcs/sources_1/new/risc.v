@@ -23,6 +23,7 @@ module risc (
 	wire[`InstAddrBus] pc;
 	wire[`InstAddrBus] next_pc_i;
 	assign next_pc_i = pc + 4;
+	assign rom_addr_o = pc[21:2];
 
 	// id
 	wire[`InstAddrBus] id_pc_i;
@@ -142,8 +143,6 @@ module risc (
 		.pc_o(pc),
 		.rom_ce_o(rom_ce_o)
 	);
-
-	assign rom_addr_o = pc;
 
 	if_id if_id0(
 		.clk(clk),

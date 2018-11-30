@@ -207,7 +207,10 @@ def inst2int(instr):
             rs2 = -1
             if ins_key[1] == 0b0010011:
                 try:
-                    rs2 = ctypes.c_uint(int(component[k])).value & 0x1f
+                    if "x" in component[k]:
+                        rs2 = ctypes.c_uint(int(component[k][2:], 16)).value
+                    else:
+                        rs2 = ctypes.c_uint(int(component[k])).value
                     res = res + (rs2 << 20)
                 except ValueError:
                     print("Immediate number is not right")

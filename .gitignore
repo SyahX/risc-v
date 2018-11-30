@@ -4,3 +4,6 @@ thinpad_top.runs/
 thinpad_top.ip_user_files/
 thinpad_top.sim/
 *.DS_Store
+tools/*.pyc
+tools/*.S
+tools/*.data

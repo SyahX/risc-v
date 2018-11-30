@@ -79,9 +79,28 @@ module thinpad_top(
     output wire video_clk,         //像素时钟输出
     output wire video_de           //行数据有效信号，用于区分消隐区
 );
+    
+    assign ext_ram_oe_n = `DeAsserted;
+    assign ext_ram_we_n = `Asserted;
+    assign ext_ram_be_n = 4'b0000;
 
+    risc risc0(
+		.clk(clk_50M),
+        .rst(reset_btn),
+        
+        .rom_addr_o(ext_ram_addr),
+        .rom_data_i(ext_ram_data),
+        .rom_ce_o(ext_ram_ce_n),
 
-/* =========== Demo code begin =========== */
+        .ram_data(base_ram_data),
+
+        .ram_addr(base_ram_addr),
+        .ram_be_n(base_ram_be_n),
+        .ram_ce_n(base_ram_ce_n),
+        .ram_oe_n(base_ram_oe_n),
+        .ram_we_n(base_ram_we_n)
+	);
+/* =========== Demo code begin =========== 
 
 // PLL分频示例
 wire locked, clk_10M, clk_20M;
@@ -198,6 +217,6 @@ vga #(12, 800, 856, 976, 1040, 600, 637, 643, 666, 1, 1) vga800x600at75 (
     .vsync(video_vsync),
     .data_enable(video_de)
 );
-/* =========== Demo code end =========== */
+ =========== Demo code end =========== */
 
 endmodule

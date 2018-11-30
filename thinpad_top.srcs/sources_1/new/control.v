@@ -100,8 +100,8 @@ module control (
 				    ctrl_ex_AluOp_o <= 2'b10;
 				    ctrl_mem_read_o <= `Asserted;
 				    ctrl_mem_write_o <= `DeAsserted;
-				    ctrl_wb_RegWrite_o <= `DeAsserted;
-				    ctrl_wb_Mem2Reg_o <= `DeAsserted;
+				    ctrl_wb_RegWrite_o <= `Asserted;
+				    ctrl_wb_Mem2Reg_o <= `Asserted;
 				end
 			`Btype:                                  // do nothing
 				begin

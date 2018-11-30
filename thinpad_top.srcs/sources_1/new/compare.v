@@ -83,7 +83,11 @@ module compare (
 					ctrl_pc_src_o <= `DeAsserted;
 				end
 			endcase
-		end else begin
+		end 
+		else if (op == `JAL || op == `JALR) begin
+		    ctrl_pc_src_o <= `Asserted;
+		end
+		else begin
 			ctrl_pc_src_o <= `DeAsserted;
 		end	
 	end

@@ -1,7 +1,7 @@
 # -*- encoding=utf-8 -*-
 import tempfile
 import subprocess
-import os
+import os, sys
 import struct
 import term
 
@@ -46,7 +46,9 @@ def single_line_asm(instr):
         os.remove(tmp_binary.name)
 
 if __name__ == "__main__":
-    filename = input("Filename: ")
+    # filename = input("Filename: ")
+    filename = sys.argv[1]
+    print (filename)
     ansname = filename.split('.S')[0] + ".data"
     ans = ""
     with open(filename, 'r') as assm:

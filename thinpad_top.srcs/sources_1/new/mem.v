@@ -83,7 +83,27 @@ module mem (
 
 	always @ (negedge clk) begin
 		if (ctrl_mem_write_i == `Asserted) begin
-			mem_ram_data_o <= mem_write_data_i;
+			case (mem_op_i) 
+                `SB : begin
+                    mem_ram_data_o <= {mem_write_data_i[7:0], 
+                                       mem_write_data_i[7:0],
+                                       mem_write_data_i[7:0],
+                                       mem_write_data_i[7:0]};
+                end
+                `SH : begin
+                    mem_ram_data_o <= {mem_write_data_i[15:0], 
+                                       mem_write_data_i[15:0]};
+                end
+                `SW : begin
+                    mem_ram_data_o <= mem_write_data_i;
+                end
+                default : begin
+                    mem_ram_data_o <= 32'bz;
+                end
+            endcase
+		end
+		else begin
+		    mem_ram_data_o <= 32'bz;
 		end
 	end
 
