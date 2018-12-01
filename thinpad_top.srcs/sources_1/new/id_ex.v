@@ -5,6 +5,9 @@
 module id_ex (
 	input wire clk,
 	input wire rst,
+
+	// ctrl detection from uart
+	input wire 					id_ex_flush,
 	
 	// control input 
 	input wire					ctrl_wb_RegWrite_i,
@@ -56,13 +59,13 @@ module id_ex (
 );
 
 	always @ (posedge clk) begin
-		if (rst == `Asserted) begin
+		if (rst == `Asserted || id_ex_flush == `Asserted) begin
 			ctrl_wb_RegWrite_o <= `DeAsserted;
 			ctrl_wb_Mem2Reg_o <= `DeAsserted;
 			ctrl_mem_read_o <= `DeAsserted;
 			ctrl_mem_write_o <= `DeAsserted;				
 			ctrl_ex_AluSrc_o <=	`DeAsserted;		
-			ctrl_ex_AluOp_o <= 4'b0000;
+			ctrl_ex_AluOp_o <= 2'b00;
 
 			reg1_data_o <= `ZeroWord;
 			reg2_data_o <= `ZeroWord;

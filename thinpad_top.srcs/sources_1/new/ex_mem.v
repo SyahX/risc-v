@@ -5,8 +5,11 @@
 module ex_mem (
 	input wire clk,
 	input wire rst,
+
+	input wire 					ex_mem_hold,
 	
 	// control input 
+	input wire					ctrl_detection_i,
 	input wire					ctrl_wb_RegWrite_i,
 	input wire					ctrl_wb_Mem2Reg_i,
 	input wire 					ctrl_mem_read_i,
@@ -24,6 +27,7 @@ module ex_mem (
 	input wire[`MemOpBus]		mem_op_i,
 
 	// control output 
+	output reg					ctrl_detection_o,
 	output reg					ctrl_wb_RegWrite_o,
 	output reg					ctrl_wb_Mem2Reg_o,
 	output reg 					ctrl_mem_read_o,
@@ -43,6 +47,7 @@ module ex_mem (
 
 	always @ (posedge clk) begin
 		if (rst == `Asserted) begin
+			ctrl_detection_o <= `DeAsserted;
 			ctrl_wb_RegWrite_o <= `DeAsserted;
 			ctrl_wb_Mem2Reg_o <= `DeAsserted;
 			ctrl_mem_read_o <= `DeAsserted;
@@ -56,7 +61,8 @@ module ex_mem (
 
 			mem_op_o <= 3'b000;
 		end
-		else begin
+		else if (ex_mem_hold == `DeAsserted) begin
+			ctrl_detection_o <= ctrl_detection_i;
 			ctrl_wb_RegWrite_o <= ctrl_wb_RegWrite_i;
 			ctrl_wb_Mem2Reg_o <= ctrl_wb_Mem2Reg_i;
 			ctrl_mem_read_o <= ctrl_mem_read_i;

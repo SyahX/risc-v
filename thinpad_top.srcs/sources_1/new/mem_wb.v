@@ -5,8 +5,11 @@
 module mem_wb (
 	input wire rst,
 	input wire clk,
+
+	input 						mem_wb_hold,
 	
 	// control input 
+	input wire					ctrl_detection_i,
 	input wire					ctrl_wb_RegWrite_i,
 	input wire					ctrl_wb_Mem2Reg_i,
 
@@ -21,6 +24,7 @@ module mem_wb (
 
 
 	// control output 
+	output reg					ctrl_detection_o,
 	output reg					ctrl_wb_RegWrite_o,
 	output reg					ctrl_wb_Mem2Reg_o,
 
@@ -36,6 +40,7 @@ module mem_wb (
 
 	always @ (posedge clk) begin
 		if (rst == `Asserted) begin
+			ctrl_detection_o <= `DeAsserted;
 			ctrl_wb_RegWrite_o <= `DeAsserted;
 			ctrl_wb_Mem2Reg_o <= `DeAsserted;
 
@@ -45,7 +50,8 @@ module mem_wb (
 
 			write_addr_o <= 5'b00000;
 		end
-		else begin
+		else if (mem_wb_hold == `DeAsserted) begin
+			ctrl_detection_o <= ctrl_detection_i;
 			ctrl_wb_RegWrite_o <= ctrl_wb_RegWrite_i;
 			ctrl_wb_Mem2Reg_o <= ctrl_wb_Mem2Reg_i;
 

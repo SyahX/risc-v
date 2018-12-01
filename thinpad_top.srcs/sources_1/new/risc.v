@@ -4,26 +4,43 @@
 
 module risc (
 	input wire clk,
+	input wire clk_11M,
 	input wire rst,
 
+	// rom
 	input  wire[`RegBus]		rom_data_i,
 	output wire[`RegBus]		rom_addr_o,
 	output wire					rom_ce_o,
 
+	// ram
 	input wire[`RegBus] 		ram_data,
 
 	output wire[`RamAddrBus] 	ram_addr,
     output wire[3:0] 			ram_be_n,
     output wire 				ram_ce_n,
     output wire 				ram_oe_n,
-    output wire 				ram_we_n
+    output wire 				ram_we_n,
+
+    // uart
+    input wire[7:0]				uart_data,
+    input wire 					uart_data_ready,
+    input wire 					uart_tbre,
+    input wire 					uart_tsre,
+    
+    output wire 				uart_rdn,
+    output wire 				uart_wrn
 );
 	
 	// pc_reg
+	wire pc_hold_i;
 	wire[`InstAddrBus] pc;
 	wire[`InstAddrBus] next_pc_i;
 	assign next_pc_i = pc + 4;
 	assign rom_addr_o = pc[21:2];
+	
+	// if_id
+	wire ctrl_if_flush;
+	wire if_id_hold;
 
 	// id
 	wire[`InstAddrBus] id_pc_i;
@@ -40,7 +57,7 @@ module risc (
 	wire[`RegBus] id_reg2_data;
 	wire[`InstAddrBus] branch_pc;
 	wire ctrl_pc_src;
-	wire ctrl_hold;
+	wire id_ctrl_hold;
 
 	wire[`RegBus] id_reg1_data_i;
 	wire[`RegBus] id_reg2_data_i;
@@ -61,7 +78,10 @@ module risc (
 	wire id_ctrl_ex_AluSrc_o; 
 	wire[`CtrlAluOpBus] id_ctrl_ex_AluOp_o;
 
-	//ex
+	// id_ex
+	wire id_ex_flush;
+
+	// ex
 	wire ex_ctrl_wb_RegWrite_i;
 	wire ex_ctrl_wb_Mem2Reg_i;
 	wire ex_ctrl_mem_read_i;
@@ -83,6 +103,10 @@ module risc (
 	wire[`AluOpBus] ex_alu_op_i;
 	wire[`RegAddrBus] ex_write_addr_i;
 
+	// uart detection
+	wire ex_ctrl_hold;
+	wire ex_ctrl_detection_o;
+
 	wire[`RegBus] ex_alu_result_o;
 	wire[`RegBus] ex_mem_write_data_o;
 
@@ -103,6 +127,7 @@ module risc (
 	assign ex_mem_op_o = ex_alu_op_i;
 
 	// mem
+	wire mem_ctrl_detection_i;
 	wire mem_ctrl_wb_RegWrite_i;
 	wire mem_ctrl_wb_Mem2Reg_i;
 	wire mem_ctrl_mem_read_i;
@@ -112,6 +137,7 @@ module risc (
 	wire[`RegAddrBus] mem_write_addr_i;
 	wire[2:0] mem_mem_op_i;	
 	
+	wire mem_finish_o;
     wire mem_ctrl_wb_RegWrite_o;
     wire mem_ctrl_wb_Mem2Reg_o;
     wire[`RegAddrBus] mem_write_addr_o;
@@ -122,6 +148,9 @@ module risc (
 	assign mem_ctrl_wb_Mem2Reg_o = mem_ctrl_wb_Mem2Reg_i;
 	assign mem_write_addr_o = mem_write_addr_i;
 
+	// mem_wb
+	wire mem_wb_hold;
+	
 	// wb
 	wire wb_ctrl_wb_RegWrite_i;
 	wire wb_ctrl_wb_Mem2Reg_i;
@@ -131,11 +160,12 @@ module risc (
 	
 	wire[`RegBus] wb_write_data_o;
 
+	assign pc_hold_i = id_ctrl_hold | ex_ctrl_hold;
 	pc_reg pc_reg0(
 		.clk(clk),
 		.rst(rst),
 
-		.pc_hold_i(ctrl_hold),
+		.pc_hold_i(pc_hold_i),
 		.ctrl_pc_src_i(ctrl_pc_src),
 		.pc_i(next_pc_i),
 		.branch_pc_i(branch_pc),
@@ -144,12 +174,14 @@ module risc (
 		.rom_ce_o(rom_ce_o)
 	);
 
+	assign ctrl_if_flush = ctrl_pc_src;
+	assign if_id_hold = id_ctrl_hold | ex_ctrl_hold;
 	if_id if_id0(
 		.clk(clk),
 		.rst(rst),
 
-		.ctrl_if_flush(ctrl_pc_src),
-		.if_id_hold(ctrl_hold),
+		.ctrl_if_flush(ctrl_if_flush),
+		.if_id_hold(if_id_hold),
 		.if_pc(pc),
 		.if_inst(rom_data_i),
 
@@ -168,7 +200,7 @@ module risc (
 		.mem_ctrl_wb_Mem2Reg_i(mem_ctrl_wb_Mem2Reg_o),
 		.mem_write_addr_i(mem_write_addr_o),
 
-		.ctrl_detection_o(ctrl_hold)
+		.ctrl_detection_o(id_ctrl_hold)
 	);
 
 	control ctrl0(
@@ -260,9 +292,13 @@ module risc (
 		.ctrl_pc_src_o(ctrl_pc_src)
 	);
 
+	
+	assign id_ex_flush = ex_ctrl_hold;
 	id_ex id_ex0(
 		.clk(clk),
 		.rst(rst),
+
+		.id_ex_flush(id_ex_flush),
 
 		.ctrl_wb_RegWrite_i(id_ctrl_wb_RegWrite_o),
 		.ctrl_wb_Mem2Reg_i(id_ctrl_wb_Mem2Reg_o),
@@ -361,10 +397,26 @@ module risc (
 		.mem_write_data_o(ex_mem_write_data_o)
 	);
 
+	uart_detection uart_detection0(
+		.ctrl_mem_read_i(ex_ctrl_mem_read_i),
+		.ctrl_mem_write_i(ex_ctrl_mem_write_i),
+		.alu_result_i(ex_alu_result_o),
+		.mem_ctrl_detection_i(mem_ctrl_detection_i),
+
+		.ex_ctrl_detection_o(ex_ctrl_detection_o),
+		.ctrl_detection_o(ex_ctrl_hold)
+	);
+
+	wire ex_mem_hold;
+	assign ex_mem_hold = mem_finish_o;
+
 	ex_mem ex_mem0(
 		.clk(clk),
 		.rst(rst),
+
+		.ex_mem_hold(ex_mem_hold),
 	
+		.ctrl_detection_i(ex_ctrl_detection_o),
 		.ctrl_wb_RegWrite_i(ex_ctrl_wb_RegWrite_o),
 		.ctrl_wb_Mem2Reg_i(ex_ctrl_wb_Mem2Reg_o),
 		.ctrl_mem_read_i(ex_ctrl_mem_read_o),
@@ -378,6 +430,8 @@ module risc (
 
 		.mem_op_i(ex_mem_op_o),
 
+		// output 
+		.ctrl_detection_i(mem_ctrl_detection_i),
 		.ctrl_wb_RegWrite_o(mem_ctrl_wb_RegWrite_i),
 		.ctrl_wb_Mem2Reg_o(mem_ctrl_wb_Mem2Reg_i),
 		.ctrl_mem_read_o(mem_ctrl_mem_read_i),
@@ -392,9 +446,28 @@ module risc (
 		.mem_op_o(mem_mem_op_i)
 	);
 
+	wire ram_finish;
+	wire sign_finish;
+	wire uart_finish;
+	
+	wire mem_ram_use;
+	wire mem_sign_use;
+	wire mem_uart_use;
+
+	wire[`RegBus] mem_data_bus;
+	wire[`RamAddrBus] mem_ram_addr;
+	wire[3:0] mem_ram_be_n;
+	wire mem_ram_ce_n;
+	wire mem_ram_oe_n;
+	wire mem_ram_we_n;
+
+	wire mem_uart_rdn;
+	wire mem_uart_wrn;
+
 	mem mem0(
 		.clk(clk),
 
+		.ctrl_detection_i(mem_ctrl_detection_i),
 		.ctrl_mem_read_i(mem_ctrl_mem_read_i),
 		.ctrl_mem_write_i(mem_ctrl_mem_write_i),
 
@@ -403,24 +476,94 @@ module risc (
 		.mem_write_data_i(mem_mem_write_data_i),
 
 		.mem_op_i(mem_mem_op_i),
-		.mem_ram_data_i(ram_data),
-		.mem_ram_data_o(ram_data),
+		.mem_read_data_i(mem_data_bus),
+		.mem_write_data_o(),
 
-		.mem_ram_addr(ram_addr),
-		.mem_ram_be_n(ram_be_n),
-		.mem_ram_ce_n(ram_ce_n),
-		.mem_ram_oe_n(ram_oe_n),
-		.mem_ram_we_n(ram_we_n),
+		.ram_finish_i(ram_finish),
+		.sign_finish_i(sign_finish),
+		.uart_finish_i(uart_finish),
+		.mem_finish_o(mem_finish_o),
+
+		.mem_ram_use_o(mem_ram_use),
+		.mem_sign_use_o(mem_sign_use),
+		.mem_uart_use_o(mem_uart_use),
+
+		//sram
+		.mem_ram_addr_o(mem_ram_addr),
+		.mem_ram_be_n_o(mem_ram_be_n),
+		.mem_ram_ce_n_o(mem_ram_ce_n),
+		.mem_ram_oe_n_o(mem_ram_oe_n),
+		.mem_ram_we_n_o(mem_ram_we_n),
+
+		// uart
+		.mem_uart_rdn_o(mem_uart_rdn),
+		.mem_uart_wrn_o(mem_uart_wrn),
 
 		.mem_read_data_o(mem_mem_read_data_o),
 
 		.alu_result_o(mem_alu_result_o)
 	);
 
-	
+	sram_ctrl sram_ctrl0(
+		.rst(mem_ram_use),
+		.clk(clk),
+		.ram_read_data_i(mem_data_bus),
+		.ram_addr_i(mem_ram_addr),
+		.ram_be_n_i(mem_ram_be_n),
+		.ram_ce_n_i(mem_ram_ce_n),
+		.ram_oe_n_i(mem_ram_oe_n),
+		.ram_we_n_i(mem_ram_we_n),
+
+		.ram_write_data_i(ram_data),
+		.ram_read_data_o(ram_data),
+
+		.ram_write_data_o(mem_data_bus),
+		.ram_addr_o(ram_addr),
+		.ram_be_n_o(ram_be_n),
+		.ram_ce_n_o(ram_ce_n),
+		.ram_oe_n_o(ram_oe_n),
+		.ram_we_n_o(ram_we_n),
+
+		.ram_finish_o(ram_finish)
+	);
+
+	sign_ctrl sign_ctrl0(
+		.rst(mem_sign_use),
+		.clk(clk),
+
+		.tsre_i(uart_tsre),
+		.data_ready_i(uart_data_ready),
+
+		.sign_data_o(mem_data_bus),
+		.sign_finish_o(sign_finish)
+	);
+
+	uart_ctrl uart_ctrl0(
+		.rst(mem_uart_use),
+		.clk(clk_11M),
+
+		.uart_write_data_i(mem_data_bus),
+		.data_ready_i(uart_data_ready),
+		.rdn_i(mem_uart_rdn),
+		.tbre_i(uart_tbre),
+		.tsre_i(uart_tsre),
+		.wrn_i(mem_uart_wrn),
+		
+		.uart_read_data_i(uart_data),
+		.uart_read_data_o(mem_data_bus),
+
+		.uart_write_data_o(uart_data),
+		.rdn_o(uart_rdn),
+		.wrn_o(uart_wrn),
+		.uart_finish_o(uart_finish)
+	);
+
+	assign mem_wb_hold = mem_finish_o;
 	mem_wb mem_wb0(
 		.clk(clk),
 		.rst(rst),
+
+		.mem_wb_hold(mem_wb_hold),
 
 		.ctrl_wb_RegWrite_i(mem_ctrl_wb_RegWrite_o),
 		.ctrl_wb_Mem2Reg_i(mem_ctrl_wb_Mem2Reg_o),

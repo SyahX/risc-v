@@ -69,3 +69,8 @@
 
 `define MemOpBus 2:0
 `define RamAddrBus 19:0
+
+`define UartAddrA 32'hBFD003F8
+`define UartAddrB 32'hBFD003FC
+
+`define High 32'hzzzzzzzz

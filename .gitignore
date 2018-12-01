@@ -7,3 +7,4 @@ thinpad_top.sim/
 tools/*.pyc
 tools/*.S
 tools/*.data
+tools/__pycache__
