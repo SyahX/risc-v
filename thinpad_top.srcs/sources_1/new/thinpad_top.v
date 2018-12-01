@@ -86,6 +86,7 @@ module thinpad_top(
 
     risc risc0(
 		.clk(clk_50M),
+		.clk_11M(clk_11M0592),
         .rst(reset_btn),
         
         .rom_addr_o(ext_ram_addr),
@@ -98,7 +99,16 @@ module thinpad_top(
         .ram_be_n(base_ram_be_n),
         .ram_ce_n(base_ram_ce_n),
         .ram_oe_n(base_ram_oe_n),
-        .ram_we_n(base_ram_we_n)
+        .ram_we_n(base_ram_we_n),
+        
+        // uart
+        .uart_data(base_ram_data[7:0]),
+        .uart_data_ready(uart_dataready),
+        .uart_tbre(uart_tbre),
+        .uart_tsre(uart_tsre),
+
+        .uart_rdn(uart_rdn),
+        .uart_wrn(uart_wrn)
 	);
 /* =========== Demo code begin =========== 
 

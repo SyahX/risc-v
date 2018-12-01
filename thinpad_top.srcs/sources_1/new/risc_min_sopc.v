@@ -27,7 +27,7 @@ module risc_min_sopc(
 
 	risc risc0(
 		.clk(clk),
-        .clk_11M(clk_11M)
+        .clk_11M(clk_11M),
         .rst(rst),
         
         // rom

@@ -431,7 +431,7 @@ module risc (
 		.mem_op_i(ex_mem_op_o),
 
 		// output 
-		.ctrl_detection_i(mem_ctrl_detection_i),
+		.ctrl_detection_o(mem_ctrl_detection_i),
 		.ctrl_wb_RegWrite_o(mem_ctrl_wb_RegWrite_i),
 		.ctrl_wb_Mem2Reg_o(mem_ctrl_wb_Mem2Reg_i),
 		.ctrl_mem_read_o(mem_ctrl_mem_read_i),
@@ -465,8 +465,6 @@ module risc (
 	wire mem_uart_wrn;
 
 	mem mem0(
-		.clk(clk),
-
 		.ctrl_detection_i(mem_ctrl_detection_i),
 		.ctrl_mem_read_i(mem_ctrl_mem_read_i),
 		.ctrl_mem_write_i(mem_ctrl_mem_write_i),
@@ -477,7 +475,7 @@ module risc (
 
 		.mem_op_i(mem_mem_op_i),
 		.mem_read_data_i(mem_data_bus),
-		.mem_write_data_o(),
+		.mem_write_data_o(mem_data_bus),
 
 		.ram_finish_i(ram_finish),
 		.sign_finish_i(sign_finish),
@@ -507,17 +505,20 @@ module risc (
 	sram_ctrl sram_ctrl0(
 		.rst(mem_ram_use),
 		.clk(clk),
-		.ram_read_data_i(mem_data_bus),
+		
+		
+		.ram_write_data_i(mem_data_bus),
 		.ram_addr_i(mem_ram_addr),
 		.ram_be_n_i(mem_ram_be_n),
 		.ram_ce_n_i(mem_ram_ce_n),
 		.ram_oe_n_i(mem_ram_oe_n),
 		.ram_we_n_i(mem_ram_we_n),
 
-		.ram_write_data_i(ram_data),
-		.ram_read_data_o(ram_data),
+		.ram_read_data_i(ram_data),
+		.ram_read_data_o(mem_data_bus),
+		
 
-		.ram_write_data_o(mem_data_bus),
+		.ram_write_data_o(ram_data),
 		.ram_addr_o(ram_addr),
 		.ram_be_n_o(ram_be_n),
 		.ram_ce_n_o(ram_ce_n),

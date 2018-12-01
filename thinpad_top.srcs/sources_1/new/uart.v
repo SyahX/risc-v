@@ -16,22 +16,22 @@ module uart (
 	reg[7:0]  data;
 
 	always @ (*) begin
-		if (uart_rdn_i == `DeAsserted) begin
+		if (uart_rdn == `DeAsserted) begin
 			uart_tbre <= `DeAsserted;
 			uart_tsre <= `DeAsserted;
 			uart_data_o <= data;
 			uart_data_ready <= `Asserted;
 		end 
-		else if (uart_wrn_i == `DeAsserted) begin
+		else if (uart_wrn == `DeAsserted) begin
 			data <= uart_data_i;
-			uart_tbre <= `Asserted;
-			uart_tsre <= `Asserted;
+			uart_tbre <= `DeAsserted;
+			uart_tsre <= `DeAsserted;
 			uart_data_o <= 8'hzz;
 			uart_data_ready <= `DeAsserted;
 		end
 		else begin
-			uart_tbre <= `DeAsserted;
-			uart_tsre <= `DeAsserted;
+			uart_tbre <= `Asserted;
+			uart_tsre <= `Asserted;
 			uart_data_o <= 8'hzz;
 			uart_data_ready <= `DeAsserted;
 		end

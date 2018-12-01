@@ -19,7 +19,7 @@ module uart_ctrl (
 	output reg[7:0]			uart_write_data_o,
 	output reg 				rdn_o,
 	output reg 				wrn_o,
-	output wire				uart_finish_o
+	output reg				uart_finish_o
 );
 	reg[2:0] state;
 	
@@ -48,8 +48,8 @@ module uart_ctrl (
 					end
 				end
 				3'b001 : begin
+				    rdn_o <= `DeAsserted;
 					if (data_ready_i == `Asserted) begin
-						rdn_o <= `DeAsserted;
 						state <= 3'b010;
 					end
 				end
@@ -75,8 +75,6 @@ module uart_ctrl (
 					rdn_o <= `Asserted;
 					wrn_o <= `Asserted;
 					uart_finish_o <= `DeAsserted;
-					uart_read_data_o <= `High;
-					uart_write_data_o <= 8'hzz;
 				end
 			endcase
 		end
