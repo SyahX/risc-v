@@ -6,6 +6,8 @@ module risc (
 	input wire clk,
 	input wire clk_11M,
 	input wire rst,
+	
+	output wire[15:0]           debug,
 
 	// rom
 	input  wire[`RegBus]		rom_data_i,
@@ -37,6 +39,7 @@ module risc (
 	wire[`InstAddrBus] next_pc_i;
 	assign next_pc_i = pc + 4;
 	assign rom_addr_o = pc[21:2];
+	assign debug = pc[15:0];
 	
 	// if_id
 	wire ctrl_if_flush;

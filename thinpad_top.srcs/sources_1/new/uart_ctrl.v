@@ -48,8 +48,8 @@ module uart_ctrl (
 					end
 				end
 				3'b001 : begin
+				    rdn_o <= `DeAsserted;
 					if (data_ready_i == `Asserted) begin
-					    rdn_o <= `DeAsserted;
 						state <= 3'b010;
 					end
 				end

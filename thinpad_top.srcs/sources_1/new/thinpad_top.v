@@ -85,9 +85,11 @@ module thinpad_top(
     assign ext_ram_be_n = 4'b0000;
 
     risc risc0(
-		.clk(clk_50M),
+		.clk(clock_btn),
 		.clk_11M(clk_11M0592),
         .rst(reset_btn),
+        
+        .debug(leds),
         
         .rom_addr_o(ext_ram_addr),
         .rom_data_i(ext_ram_data),

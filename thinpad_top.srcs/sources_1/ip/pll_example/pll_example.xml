@@ -1289,6 +1289,10 @@
         </spirit:fileSetRef>
         <spirit:parameters>
           <spirit:parameter>
+            <spirit:name>GENtimestamp</spirit:name>
+            <spirit:value>Sat Dec 01 09:53:51 UTC 2018</spirit:value>
+          </spirit:parameter>
+          <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
             <spirit:value>8:4856951f</spirit:value>
           </spirit:parameter>
