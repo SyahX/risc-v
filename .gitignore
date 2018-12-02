@@ -10,3 +10,6 @@ tools/*.data
 tools/*.bin
 tools/__pycache__
 tools/Downloads
+.vscode/
+supervisor/kernel/obj/
+supervisor/test.py
