@@ -10,10 +10,7 @@ tools/*.data
 tools/*.bin
 tools/__pycache__
 tools/Downloads
-<<<<<<< HEAD
 .vscode/
 supervisor/kernel/obj/
 supervisor/test.py
-=======
 *.swp
->>>>>>> 0ce497381ef98b7beb74a5abfb98a8073729e5b5
