@@ -181,7 +181,11 @@ def run_G(addr):
                 break
             elif ret == b'\x80':
                 raise TrapError()
-            sys.stdout.buffer.write(ret)
+            if hasattr(sys.stdout, 'buffer'):
+                sys.stdout.buffer.write(ret)
+            else:
+                text  = ret.decode(sys.stdout.encoding, 'strict')
+                sys.stdout.write(text)
         print('') #just a new line
         elapse = timer() - time_start
         print('elapsed time: %.3fs' % (elapse))

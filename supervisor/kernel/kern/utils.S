@@ -63,7 +63,6 @@ READSERIAL:                         // 读串口：将读到的数据写入v0低
     nop
 #endif
 
-#TODO: 将下面代码改成RISC-V汇编代码
 READSERIALWORD:
     addi sp, sp, -0x14             // 保存ra,s0
     sw ra, 0x0(sp)
