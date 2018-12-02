@@ -41,12 +41,13 @@ module uart_ctrl (
 					rdn_o <= `Asserted;
 					wrn_o <= `Asserted;
 					uart_read_data_o <= `High;
-					uart_write_data_o <= `High;
 					if (rdn_i == `DeAsserted) begin
 						state <= 3'b001;
+						uart_write_data_o <= `High;
 					end 
 					else begin
 						state <= 3'b011;
+						uart_write_data_o <= uart_write_data_i[7:0];
 					end
 				end
 				3'b001 : begin
@@ -61,21 +62,28 @@ module uart_ctrl (
 				end
 				3'b011 : begin
 					wrn_o <= `DeAsserted;
-					uart_write_data_o <= uart_write_data_i[7:0];
 					state <= 3'b100;
 				end
 				3'b100 : begin
 					wrn_o <= `Asserted;
+					uart_write_data_o <= `High;
 					state <= 3'b101;
 				end
 				3'b101 : begin
-					if (tbre_i == `Asserted && tsre_i == `Asserted) begin
-						state <= 3'b111;
+					if (tbre_i == `Asserted) begin
+						state <= 3'b110;
 					end
+				end
+				3'b110 : begin
+				    if (tsre_i == `Asserted) begin
+                        state <= 3'b111;
+                    end
 				end
 				3'b111 : begin
 					rdn_o <= `Asserted;
 					wrn_o <= `Asserted;
+					uart_read_data_o <= `High;
+                    uart_write_data_o <= `High;
 				end
 			endcase
 		end
