@@ -9,10 +9,13 @@ module risc (
 	
 	output wire[15:0]           debug,
 
+	output wire 				sram_ctrl,
+
 	// rom
-	inout  wire[`RegBus]		rom_data_i,
-	output wire[19:0]		    rom_addr_o,
-	output wire					rom_ce_o,
+	inout  wire[`RegBus]		rom_data,
+
+	output wire[19:0]		    rom_addr,
+	output wire					rom_ce_n,
 
 	// ram
 	inout wire[`RegBus] 		ram_data,
@@ -32,13 +35,15 @@ module risc (
     output wire 				uart_rdn,
     output wire 				uart_wrn
 );
+	wire mem_ctrl_ram;
+	assign sram_ctrl = mem_ctrl_ram;
 	
 	// pc_reg
 	wire pc_hold_i;
 	wire[`InstAddrBus] pc;
 	wire[`InstAddrBus] next_pc_i;
 	assign next_pc_i = pc + 4;
-	assign rom_addr_o = pc[21:2];
+	assign rom_addr = pc[21:2];
 	
 	// if_id
 	wire ctrl_if_flush;
@@ -162,7 +167,7 @@ module risc (
 	
 	wire[`RegBus] wb_write_data_o;
 
-	assign pc_hold_i = id_ctrl_hold | ex_ctrl_hold;
+	assign pc_hold_i = id_ctrl_hold | ex_ctrl_hold | mem_ctrl_ram;
 	assign debug = {ctrl_pc_src, pc[16:2]};
 	pc_reg pc_reg0(
 		.clk(clk),
@@ -174,10 +179,10 @@ module risc (
 		.branch_pc_i(branch_pc),
 
 		.pc_o(pc),
-		.rom_ce_o(rom_ce_o)
+		.rom_ce_o(rom_ce_n)
 	);
 
-	assign ctrl_if_flush = ctrl_pc_src;
+	assign ctrl_if_flush = ctrl_pc_src | mem_ctrl_ram;
 	assign if_id_hold = id_ctrl_hold | ex_ctrl_hold;
 	if_id if_id0(
 		.clk(clk),
@@ -186,7 +191,7 @@ module risc (
 		.ctrl_if_flush(ctrl_if_flush),
 		.if_id_hold(if_id_hold),
 		.if_pc(pc),
-		.if_inst(rom_data_i),
+		.if_inst(rom_data),
 
 		.id_pc(id_pc_i),
 		.id_inst(id_inst_i)
@@ -558,7 +563,9 @@ module risc (
 		.uart_write_data_o(uart_data),
 		.rdn_o(uart_rdn),
 		.wrn_o(uart_wrn),
-		.uart_finish_o(uart_finish)
+		.uart_finish_o(uart_finish),
+
+		.mem_ctrl_ram(mem_ctrl_ram)
 	);
 
 	assign mem_wb_hold = mem_finish_o;

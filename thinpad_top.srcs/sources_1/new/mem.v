@@ -42,8 +42,10 @@ module mem (
 	output reg[`RegBus]			mem_read_data_o,
 
 	// output 
-	output wire[`RegBus]		alu_result_o
+	output wire[`RegBus]		alu_result_o,
 
+	// mem_ctrl_ram
+	output wire 				mem_ctrl_ram
 );
 	wire rw;
 	assign rw = ~(ctrl_mem_read_i | ctrl_mem_write_i);
@@ -54,7 +56,10 @@ module mem (
 	assign mem_uart_use_o = ((alu_result_i == `UartAddrA) ? `DeAsserted : `Asserted) | rw;	
 
 	assign mem_uart_rdn_o = ~ctrl_mem_read_i;
-	assign mem_uart_wrn_o = ~ctrl_mem_write_i;			   
+	assign mem_uart_wrn_o = ~ctrl_mem_write_i;	
+
+	assign mem_ctrl_ram = (ctrl_mem_read_i | ctrl_mem_write_i) 
+					      & (~ctrl_detection_i) & alu_result_i[22];   
 
 	always @ (*) begin
 		if (ctrl_mem_read_i == `Asserted) begin
