@@ -83,7 +83,7 @@ SHELL:
     lui s1, %hi(uregs)
     ori s2, zero, 124               // 计数器，打印124字节
 .LC0:
-    lb a0, %lo(uregs)(s0)           // 读取字节
+    lb a0, %lo(uregs)(s1)           // 读取字节
     addi s2, s2, -1                // 滚动计数器
     jal WRITESERIAL                 // 写入串口
     nop
@@ -128,20 +128,28 @@ SHELL:
     addi sp, sp, -8                 // 保存s1,s2
     sw s1, 0(sp)
     sw s2, 4(sp)
+    sw s3, 8(sp)                   // DEBUG
+
+    lui s3, 0x80400
 
     jal READSERIALWORD
     nop
     or s1, t5, zero                 // 获得addr
+    sw t5, 0(s3)                    //DEBUG
+    addi s3, s3, 4
     jal READSERIALWORD
     nop
     or s2, t5, zero                 // 获得num
+    sw t5, 0(s3)
     srl s2, s2, 2                   // num除4，获得字数
 .LC2:                               // 每次写入一字
     jal READSERIALWORD              // 从串口读入一字
     nop
-    sw t5, 0(s0)                    // 写内存一字
+    sw t5, 0(s1)                    // 写内存一字
+    sw t5, 0(s3)                   // DEBUG
     addi s2, s2, -1                // 滚动计数器
     addi s1, s1, 4                 // 移动写指针
+    addi s3, s3, 4                 //DEBUG
     bne s2, zero, .LC2              // 写循环
     nop
 
