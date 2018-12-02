@@ -14,6 +14,7 @@ import struct
 import subprocess
 import sys
 import tempfile
+import ctypes
 from timeit import default_timer as timer
 try:
     import serial
@@ -33,6 +34,126 @@ if 'GCCPREFIX' in os.environ:
 
 Reg_alias = ['zero', 'ra', 'sp', 'gp', 'tp', 't0', 't1', 't2', 's0', 's1', 'a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 's2', 's3', 's4', 's5', 's6', 's7', 's8', 's9', 's10', 's11', 't3', 't4', 't5', 't6']
 
+inst_n = 37
+itype_r = 0
+itype_i = 1
+itype_s = 2
+itype_b = 3
+itype_u = 4
+itype_j = 5
+itype_f = 6
+
+Reg_name2index = {
+    'zero' : 0,
+    'ra'   : 1,
+    'sp'   : 2,
+    'gp'   : 3,
+    'tp'   : 4,
+    't0'   : 5,
+    't1'   : 6,
+    't2'   : 7,
+    's0'   : 8,
+    'fp'   : 8,
+    's1'   : 9,
+    'a0'   : 10,
+    'a1'   : 11,
+    'a2'   : 12,
+    'a3'   : 13,
+    'a4'   : 14,
+    'a5'   : 15,
+    'a6'   : 16,
+    'a7'   : 17,
+    's2'   : 18,
+    's3'   : 19,
+    's4'   : 20,
+    's5'   : 21,
+    's6'   : 22,
+    's7'   : 23,
+    's8'   : 24,
+    's9'   : 25,
+    's10'  : 26,
+    's11'  : 27,
+    't3'   : 28,
+    't4'   : 29,
+    't5'   : 30,
+    't6'   : 31,
+    'x0'   : 0,
+    'x1'   : 1,
+    'x2'   : 2,
+    'x3'   : 3,
+    'x4'   : 4,
+    'x5'   : 5,
+    'x6'   : 6,
+    'x7'   : 7,
+    'x8'   : 8,
+    'x9'   : 9,
+    'x10'  : 10,
+    'x11'  : 11,
+    'x12'  : 12,
+    'x13'  : 13,
+    'x14'  : 14,
+    'x15'  : 15,
+    'x16'  : 16,
+    'x17'  : 17,
+    'x18'  : 18,
+    'x19'  : 19,
+    'x20'  : 20,
+    'x21'  : 21,
+    'x22'  : 22,
+    'x23'  : 23,
+    'x24'  : 24,
+    'x25'  : 25,
+    'x26'  : 26,
+    'x27'  : 27,
+    'x28'  : 28,
+    'x29'  : 29,
+    'x30'  : 30,
+    'x31'  : 31,
+}
+
+inst_struct = {
+    "lui"   : [itype_u, 0b0110111, 0    , 0],
+    "auipc" : [itype_u, 0b0010111, 0    , 0],
+    "jal"   : [itype_j, 0b1101111, 0    , 0],
+    "jalr"  : [itype_i, 0b1100111, 0    , 0],
+    "beq"   : [itype_b, 0b1100011, 0b000, 0],
+    "bne"   : [itype_b, 0b1100011, 0b001, 0],
+    "blt"   : [itype_b, 0b1100011, 0b100, 0],
+    "bge"   : [itype_b, 0b1100011, 0b101, 0],
+    "bltu"  : [itype_b, 0b1100011, 0b110, 0],
+    "bgeu"  : [itype_b, 0b1100011, 0b111, 0],
+    "lb"    : [itype_i, 0b0000011, 0b000, 0],
+    "lh"    : [itype_i, 0b0000011, 0b001, 0],
+    "lw"    : [itype_i, 0b0000011, 0b010, 0],
+    "lbu"   : [itype_i, 0b0000011, 0b100, 0],
+    "lhu"   : [itype_i, 0b0000011, 0b101, 0],
+    "sb"    : [itype_s, 0b0100011, 0b000, 0],
+    "sh"    : [itype_s, 0b0100011, 0b001, 0],
+    "sw"    : [itype_s, 0b0100011, 0b010, 0],
+    "addi"  : [itype_i, 0b0010011, 0b000, 0],
+    "slti"  : [itype_i, 0b0010011, 0b010, 0],
+    "sltiu" : [itype_i, 0b0010011, 0b011, 0],
+    "xori"  : [itype_i, 0b0010011, 0b100, 0],
+    "ori"   : [itype_i, 0b0010011, 0b110, 0],
+    "andi"  : [itype_i, 0b0010011, 0b111, 0],
+    "slli"  : [itype_r, 0b0010011, 0b001, 0b0000000],
+    "srli"  : [itype_r, 0b0010011, 0b101, 0b0000000],
+    "srai"  : [itype_r, 0b0010011, 0b101, 0b0100000],
+    "add"   : [itype_r, 0b0110011, 0b000, 0b0000000],
+    "sub"   : [itype_r, 0b0110011, 0b000, 0b0000000],
+    "sll"   : [itype_r, 0b0110011, 0b001, 0b0000000],
+    "slt"   : [itype_r, 0b0110011, 0b010, 0b0000000],
+    "sltu"  : [itype_r, 0b0110011, 0b011, 0b0000000],
+    "xor"   : [itype_r, 0b0110011, 0b100, 0b0000000],
+    "srl"   : [itype_r, 0b0110011, 0b101, 0b0000000],
+    "sra"   : [itype_r, 0b0110011, 0b101, 0b0100000],
+    "or"    : [itype_r, 0b0110011, 0b110, 0b0000000],
+    "and"   : [itype_r, 0b0110011, 0b111, 0b0000000],
+    "nop"   : [itype_i, 0x13]
+}
+
+
+
 # convert 32-bit int to byte string of length 4, from LSB to MSB
 def int_to_byte_string(val):
     return struct.pack('<I', val)
@@ -40,7 +161,113 @@ def int_to_byte_string(val):
 def byte_string_to_int(val):
     return struct.unpack('<I', val)[0]
 
-# invoke assembler to encode single instruction (in little endian MIPS32)
+def inst2int(instr):
+    instr = instr.lower()
+    component = re.split(r' *, *|\s*,\s*| +', instr)
+    # print(component)
+    res = 0
+    k = 0
+    if component[k] in inst_struct:
+        if component[k] == "nop":
+            res = inst_struct["nop"][1]
+            return int_to_byte_string(res)
+        ins_key = inst_struct[component[0]]
+        # print(ins_key)
+        k += 1
+        res = ins_key[1]
+        # print("res: " + str(bin(res)))
+        if ins_key[0] == itype_r or ins_key[0] == itype_i or ins_key[0] == itype_s or ins_key[0] == itype_b:
+            res = (ins_key[2] << 12) + res
+            # print("res: " + str(bin(res)))
+        if ins_key[0] == itype_r:
+            res = (ins_key[3] << 25) + res
+        if ins_key[0] == itype_r or ins_key[0] == itype_i or ins_key[0] == itype_u or ins_key[0] == itype_j:
+            rd = -1
+            if component[k] in Reg_name2index:
+                rd = Reg_name2index[component[1]]
+                # print("rd: " + str(rd))
+                res = (rd << 7) + res
+            else:
+                print("Register name %s can not found, try another name! " % component[k])
+                return ''
+            k += 1
+            # print("res: " + str(bin(res)))
+        if ins_key[0] == itype_r or ins_key[0] == itype_i or ins_key[0] == itype_s or ins_key[0] == itype_b:
+            rs1 = -1
+            if component[k] in Reg_name2index:
+                rs1 = Reg_name2index[component[k]]
+                res = (rs1 << 15) + res
+                # print("rs1: " + str(rs1))
+            else:
+                print("Register name %s can not found, try another name! " % component[k])
+                return ''
+            k += 1
+            # print("res: " + str(bin(res)))
+        if ins_key[0] == itype_r or ins_key[0] == itype_b or ins_key[0] == itype_s:
+            rs2 = -1
+            if ins_key[1] == 0b0010011:
+                try:
+                    rs2 = ctypes.c_uint(int(component[k])).value & 0x1f
+                    res = res + (rs2 << 20)
+                except ValueError:
+                    print("Immediate number is not right")
+                    return ''
+            elif component[k] in Reg_name2index:
+                rs2 = Reg_name2index[component[k]]
+                res = res + (rs2 << 20)
+            else:
+                print("Register name %s can not found, try another name! " % component[k])
+                return ''
+            # print("rs2: " + str(rs2))
+            k += 1
+            # print("res: " + str(bin(res)))
+        if ins_key[0] != itype_r:
+            try:
+                if "x" in component[k]:
+                    imm = ctypes.c_uint(int(component[k][2:], 16)).value
+                else:
+                    imm = ctypes.c_uint(int(component[k])).value
+                print("immediate %d" % imm)
+            except ValueError:
+                print("Immediate number is not right")
+                return ''
+            k += 1
+            if ins_key[0] == itype_i:
+                res = res + ((imm & 0xfff) << 20)
+            if ins_key[0] == itype_s:
+                res = res + ((imm & 0x1f) << 7)
+                imm = imm >> 5
+                res = res + ((imm & 0x7f) << 25)
+            if ins_key[0] == itype_b:
+                # imm = imm >> 1
+                res = res + ((imm & 0xf) << 8)
+                imm = imm >> 4
+                res = res + ((imm & 0x3f) << 25)
+                imm = imm >> 6
+                res = res + ((imm & 0x1) << 7)
+                imm = imm >> 1
+                res = res + ((imm & 0x1) << 31)
+            if ins_key[0] == itype_u:
+                # imm = imm >> 12
+                res = res + ((imm & 0xfffff) << 12)
+            if ins_key[0] == itype_j:
+                # imm = imm >> 1
+                res = res + ((imm & 0x3ff) << 21)
+                imm = imm >> 10
+                res = res + ((imm & 0x1) << 20)
+                imm = imm >> 1
+                res = res + ((imm & 0xff) << 12)
+                imm = imm >> 8
+                res = res + ((imm & 0x1) << 31)
+    if res != 0:
+        return int_to_byte_string(res)
+    else:
+        print("Cannot find the instruction %s" % component[0])
+        return ''
+            
+
+
+# invoke assembler to encode single instruction (in risc-v 32i)
 # returns a byte string of encoded instruction, from lowest byte to highest byte
 # returns empty string on failure (in which case assembler messages are printed to stdout)
 # TODO:确定命令行的参数
@@ -110,7 +337,8 @@ def run_A(addr):
         try:
             instr = int_to_byte_string(int(line, 16))
         except ValueError:
-            instr = single_line_asm(line)
+            # instr = single_line_asm(line)
+            instr = inst2int(line)
             if instr == '':
                 continue
         outp.write(b'A')
