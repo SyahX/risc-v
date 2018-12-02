@@ -1,0 +1,530 @@
+
+kernel.elf：     文件格式 elf32-littleriscv
+
+
+Disassembly of section .text.init:
+
+80000000 <INITLOCATE>:
+80000000:	80001d37          	lui	s10,0x80001
+80000004:	274d0d13          	addi	s10,s10,628 # 80001274 <SerialStat+0xc0300e78>
+80000008:	000d0067          	jr	s10
+8000000c:	00000013          	nop
+
+Disassembly of section .text:
+
+80001180 <WRITESERIAL>:
+80001180:	bfd00337          	lui	t1,0xbfd00
+
+80001184 <.TESTW>:
+80001184:	3fc30283          	lb	t0,1020(t1) # bfd003fc <SerialStat+0x0>
+80001188:	0012f293          	andi	t0,t0,1
+8000118c:	00029863          	bnez	t0,8000119c <.WSERIAL>
+80001190:	00000013          	nop
+80001194:	ff1ff06f          	j	80001184 <.TESTW>
+80001198:	00000013          	nop
+
+8000119c <.WSERIAL>:
+8000119c:	bfd00337          	lui	t1,0xbfd00
+800011a0:	3ea30c23          	sb	a0,1016(t1) # bfd003f8 <SerialStat+0xfffffffc>
+800011a4:	00008067          	ret
+800011a8:	00000013          	nop
+
+800011ac <READSERIAL>:
+800011ac:	bfd00337          	lui	t1,0xbfd00
+
+800011b0 <.TESTR>:
+800011b0:	3fc30283          	lb	t0,1020(t1) # bfd003fc <SerialStat+0x0>
+800011b4:	0022f293          	andi	t0,t0,2
+800011b8:	00029863          	bnez	t0,800011c8 <.RSERIAL>
+800011bc:	00000013          	nop
+800011c0:	ff1ff06f          	j	800011b0 <.TESTR>
+800011c4:	00000013          	nop
+
+800011c8 <.RSERIAL>:
+800011c8:	bfd00337          	lui	t1,0xbfd00
+800011cc:	3f830f03          	lb	t5,1016(t1) # bfd003f8 <SerialStat+0xfffffffc>
+800011d0:	00008067          	ret
+800011d4:	00000013          	nop
+
+800011d8 <READSERIALWORD>:
+800011d8:	fec10113          	addi	sp,sp,-20
+800011dc:	00112023          	sw	ra,0(sp)
+800011e0:	00812223          	sw	s0,4(sp)
+800011e4:	00912423          	sw	s1,8(sp)
+800011e8:	01212623          	sw	s2,12(sp)
+800011ec:	01312823          	sw	s3,16(sp)
+800011f0:	fbdff0ef          	jal	ra,800011ac <READSERIAL>
+800011f4:	00000013          	nop
+800011f8:	01e06433          	or	s0,zero,t5
+800011fc:	fb1ff0ef          	jal	ra,800011ac <READSERIAL>
+80001200:	00000013          	nop
+80001204:	01e064b3          	or	s1,zero,t5
+80001208:	fa5ff0ef          	jal	ra,800011ac <READSERIAL>
+8000120c:	00000013          	nop
+80001210:	01e06933          	or	s2,zero,t5
+80001214:	f99ff0ef          	jal	ra,800011ac <READSERIAL>
+80001218:	00000013          	nop
+8000121c:	01e069b3          	or	s3,zero,t5
+80001220:	0ff47413          	andi	s0,s0,255
+80001224:	0ff9f993          	andi	s3,s3,255
+80001228:	0ff97913          	andi	s2,s2,255
+8000122c:	0ff4f493          	andi	s1,s1,255
+80001230:	01306f33          	or	t5,zero,s3
+80001234:	008f1f13          	slli	t5,t5,0x8
+80001238:	012f6f33          	or	t5,t5,s2
+8000123c:	008f1f13          	slli	t5,t5,0x8
+80001240:	009f6f33          	or	t5,t5,s1
+80001244:	008f1f13          	slli	t5,t5,0x8
+80001248:	008f6f33          	or	t5,t5,s0
+8000124c:	00012083          	lw	ra,0(sp)
+80001250:	00412403          	lw	s0,4(sp)
+80001254:	00812483          	lw	s1,8(sp)
+80001258:	00c12903          	lw	s2,12(sp)
+8000125c:	01012983          	lw	s3,16(sp)
+80001260:	01410113          	addi	sp,sp,20
+80001264:	00008067          	ret
+80001268:	00000013          	nop
+8000126c:	0000                	unimp
+8000126e:	807f                	0x807f
+80001270:	008c                	addi	a1,sp,64
+80001272:	807f                	0x807f
+
+80001274 <START>:
+80001274:	807f0d37          	lui	s10,0x807f0
+80001278:	000d0d13          	mv	s10,s10
+8000127c:	807f0db7          	lui	s11,0x807f0
+80001280:	08cd8d93          	addi	s11,s11,140 # 807f008c <SerialStat+0xc0aefc90>
+
+80001284 <bss_init>:
+80001284:	01bd0c63          	beq	s10,s11,8000129c <bss_init_done>
+80001288:	00000013          	nop
+8000128c:	000d2023          	sw	zero,0(s10) # 807f0000 <SerialStat+0xc0aefc04>
+80001290:	004d0d13          	addi	s10,s10,4
+80001294:	ff1ff06f          	j	80001284 <bss_init>
+80001298:	00000013          	nop
+
+8000129c <bss_init_done>:
+8000129c:	80800137          	lui	sp,0x80800
+800012a0:	00010113          	mv	sp,sp
+800012a4:	00016433          	or	s0,sp,zero
+800012a8:	807f02b7          	lui	t0,0x807f0
+800012ac:	00028293          	mv	t0,t0
+800012b0:	807f0337          	lui	t1,0x807f0
+800012b4:	00532223          	sw	t0,4(t1) # 807f0004 <SerialStat+0xc0aefc08>
+800012b8:	807f0337          	lui	t1,0x807f0
+800012bc:	00532e23          	sw	t0,28(t1) # 807f001c <SerialStat+0xc0aefc20>
+800012c0:	bfd002b7          	lui	t0,0xbfd00
+800012c4:	01006313          	ori	t1,zero,16
+800012c8:	3e628e23          	sb	t1,1020(t0) # bfd003fc <SerialStat+0x0>
+800012cc:	02006293          	ori	t0,zero,32
+800012d0:	fff28293          	addi	t0,t0,-1
+800012d4:	ffc10113          	addi	sp,sp,-4 # 807ffffc <SerialStat+0xc0affc00>
+800012d8:	00012023          	sw	zero,0(sp)
+800012dc:	fe029ae3          	bnez	t0,800012d0 <bss_init_done+0x34>
+800012e0:	00000013          	nop
+800012e4:	807f02b7          	lui	t0,0x807f0
+800012e8:	08028293          	addi	t0,t0,128 # 807f0080 <SerialStat+0xc0aefc84>
+800012ec:	0022a023          	sw	sp,0(t0)
+800012f0:	00016fb3          	or	t6,sp,zero
+800012f4:	02006293          	ori	t0,zero,32
+800012f8:	fff28293          	addi	t0,t0,-1
+800012fc:	ffc10113          	addi	sp,sp,-4
+80001300:	00012023          	sw	zero,0(sp)
+80001304:	fe029ae3          	bnez	t0,800012f8 <bss_init_done+0x5c>
+80001308:	00000013          	nop
+8000130c:	807f02b7          	lui	t0,0x807f0
+80001310:	08028293          	addi	t0,t0,128 # 807f0080 <SerialStat+0xc0aefc84>
+80001314:	0022a223          	sw	sp,4(t0)
+80001318:	062fae23          	sw	sp,124(t6)
+8000131c:	807f03b7          	lui	t2,0x807f0
+80001320:	08438393          	addi	t2,t2,132 # 807f0084 <SerialStat+0xc0aefc88>
+80001324:	0003a383          	lw	t2,0(t2)
+80001328:	807f0337          	lui	t1,0x807f0
+8000132c:	08732423          	sw	t2,136(t1) # 807f0088 <SerialStat+0xc0aefc8c>
+80001330:	0080006f          	j	80001338 <WELCOME>
+80001334:	00000013          	nop
+
+80001338 <WELCOME>:
+80001338:	04d06513          	ori	a0,zero,77
+8000133c:	e45ff0ef          	jal	ra,80001180 <WRITESERIAL>
+80001340:	00000013          	nop
+80001344:	04f06513          	ori	a0,zero,79
+80001348:	e39ff0ef          	jal	ra,80001180 <WRITESERIAL>
+8000134c:	00000013          	nop
+80001350:	04e06513          	ori	a0,zero,78
+80001354:	e2dff0ef          	jal	ra,80001180 <WRITESERIAL>
+80001358:	00000013          	nop
+8000135c:	04906513          	ori	a0,zero,73
+80001360:	e21ff0ef          	jal	ra,80001180 <WRITESERIAL>
+80001364:	00000013          	nop
+80001368:	05406513          	ori	a0,zero,84
+8000136c:	e15ff0ef          	jal	ra,80001180 <WRITESERIAL>
+80001370:	00000013          	nop
+80001374:	04f06513          	ori	a0,zero,79
+80001378:	e09ff0ef          	jal	ra,80001180 <WRITESERIAL>
+8000137c:	00000013          	nop
+80001380:	05206513          	ori	a0,zero,82
+80001384:	dfdff0ef          	jal	ra,80001180 <WRITESERIAL>
+80001388:	00000013          	nop
+8000138c:	02006513          	ori	a0,zero,32
+80001390:	df1ff0ef          	jal	ra,80001180 <WRITESERIAL>
+80001394:	00000013          	nop
+80001398:	06606513          	ori	a0,zero,102
+8000139c:	de5ff0ef          	jal	ra,80001180 <WRITESERIAL>
+800013a0:	00000013          	nop
+800013a4:	06f06513          	ori	a0,zero,111
+800013a8:	dd9ff0ef          	jal	ra,80001180 <WRITESERIAL>
+800013ac:	00000013          	nop
+800013b0:	07206513          	ori	a0,zero,114
+800013b4:	dcdff0ef          	jal	ra,80001180 <WRITESERIAL>
+800013b8:	00000013          	nop
+800013bc:	02006513          	ori	a0,zero,32
+800013c0:	dc1ff0ef          	jal	ra,80001180 <WRITESERIAL>
+800013c4:	00000013          	nop
+800013c8:	05206513          	ori	a0,zero,82
+800013cc:	db5ff0ef          	jal	ra,80001180 <WRITESERIAL>
+800013d0:	00000013          	nop
+800013d4:	04906513          	ori	a0,zero,73
+800013d8:	da9ff0ef          	jal	ra,80001180 <WRITESERIAL>
+800013dc:	00000013          	nop
+800013e0:	05306513          	ori	a0,zero,83
+800013e4:	d9dff0ef          	jal	ra,80001180 <WRITESERIAL>
+800013e8:	00000013          	nop
+800013ec:	04306513          	ori	a0,zero,67
+800013f0:	d91ff0ef          	jal	ra,80001180 <WRITESERIAL>
+800013f4:	00000013          	nop
+800013f8:	02d06513          	ori	a0,zero,45
+800013fc:	d85ff0ef          	jal	ra,80001180 <WRITESERIAL>
+80001400:	00000013          	nop
+80001404:	05606513          	ori	a0,zero,86
+80001408:	d79ff0ef          	jal	ra,80001180 <WRITESERIAL>
+8000140c:	00000013          	nop
+80001410:	02006513          	ori	a0,zero,32
+80001414:	d6dff0ef          	jal	ra,80001180 <WRITESERIAL>
+80001418:	00000013          	nop
+8000141c:	02d06513          	ori	a0,zero,45
+80001420:	d61ff0ef          	jal	ra,80001180 <WRITESERIAL>
+80001424:	00000013          	nop
+80001428:	02006513          	ori	a0,zero,32
+8000142c:	d55ff0ef          	jal	ra,80001180 <WRITESERIAL>
+80001430:	00000013          	nop
+80001434:	06906513          	ori	a0,zero,105
+80001438:	d49ff0ef          	jal	ra,80001180 <WRITESERIAL>
+8000143c:	00000013          	nop
+80001440:	06e06513          	ori	a0,zero,110
+80001444:	d3dff0ef          	jal	ra,80001180 <WRITESERIAL>
+80001448:	00000013          	nop
+8000144c:	06906513          	ori	a0,zero,105
+80001450:	d31ff0ef          	jal	ra,80001180 <WRITESERIAL>
+80001454:	00000013          	nop
+80001458:	07406513          	ori	a0,zero,116
+8000145c:	d25ff0ef          	jal	ra,80001180 <WRITESERIAL>
+80001460:	00000013          	nop
+80001464:	06906513          	ori	a0,zero,105
+80001468:	d19ff0ef          	jal	ra,80001180 <WRITESERIAL>
+8000146c:	00000013          	nop
+80001470:	06106513          	ori	a0,zero,97
+80001474:	d0dff0ef          	jal	ra,80001180 <WRITESERIAL>
+80001478:	00000013          	nop
+8000147c:	06c06513          	ori	a0,zero,108
+80001480:	d01ff0ef          	jal	ra,80001180 <WRITESERIAL>
+80001484:	00000013          	nop
+80001488:	06906513          	ori	a0,zero,105
+8000148c:	cf5ff0ef          	jal	ra,80001180 <WRITESERIAL>
+80001490:	00000013          	nop
+80001494:	07a06513          	ori	a0,zero,122
+80001498:	ce9ff0ef          	jal	ra,80001180 <WRITESERIAL>
+8000149c:	00000013          	nop
+800014a0:	06506513          	ori	a0,zero,101
+800014a4:	cddff0ef          	jal	ra,80001180 <WRITESERIAL>
+800014a8:	00000013          	nop
+800014ac:	06406513          	ori	a0,zero,100
+800014b0:	cd1ff0ef          	jal	ra,80001180 <WRITESERIAL>
+800014b4:	00000013          	nop
+800014b8:	02e06513          	ori	a0,zero,46
+800014bc:	cc5ff0ef          	jal	ra,80001180 <WRITESERIAL>
+800014c0:	00000013          	nop
+800014c4:	0380006f          	j	800014fc <SHELL>
+800014c8:	00000013          	nop
+
+800014cc <IDLELOOP>:
+800014cc:	00000013          	nop
+800014d0:	00000013          	nop
+800014d4:	00000013          	nop
+800014d8:	00000013          	nop
+800014dc:	00000013          	nop
+800014e0:	00000013          	nop
+800014e4:	00000013          	nop
+800014e8:	00000013          	nop
+800014ec:	00000013          	nop
+800014f0:	00000013          	nop
+800014f4:	fd9ff06f          	j	800014cc <IDLELOOP>
+800014f8:	00000013          	nop
+
+800014fc <SHELL>:
+800014fc:	cb1ff0ef          	jal	ra,800011ac <READSERIAL>
+80001500:	00000013          	nop
+80001504:	05206293          	ori	t0,zero,82
+80001508:	085f0e63          	beq	t5,t0,800015a4 <.OP_R>
+8000150c:	00000013          	nop
+80001510:	04406293          	ori	t0,zero,68
+80001514:	0c5f0a63          	beq	t5,t0,800015e8 <.OP_D>
+80001518:	00000013          	nop
+8000151c:	04106293          	ori	t0,zero,65
+80001520:	105f0e63          	beq	t5,t0,8000163c <.OP_A>
+80001524:	00000013          	nop
+80001528:	04706293          	ori	t0,zero,71
+8000152c:	165f0463          	beq	t5,t0,80001694 <.OP_G>
+80001530:	00000013          	nop
+80001534:	05406293          	ori	t0,zero,84
+80001538:	005f0863          	beq	t5,t0,80001548 <.OP_T>
+8000153c:	00000013          	nop
+80001540:	2940006f          	j	800017d4 <.DONE>
+80001544:	00000013          	nop
+
+80001548 <.OP_T>:
+80001548:	c91ff0ef          	jal	ra,800011d8 <READSERIALWORD>
+8000154c:	00000013          	nop
+80001550:	fe810113          	addi	sp,sp,-24
+80001554:	00912023          	sw	s1,0(sp)
+80001558:	01212223          	sw	s2,4(sp)
+8000155c:	fff00493          	li	s1,-1
+80001560:	00912623          	sw	s1,12(sp)
+80001564:	00912823          	sw	s1,16(sp)
+80001568:	00912a23          	sw	s1,20(sp)
+8000156c:	00c06913          	ori	s2,zero,12
+80001570:	00c10493          	addi	s1,sp,12
+80001574:	00048503          	lb	a0,0(s1)
+80001578:	fff90913          	addi	s2,s2,-1
+8000157c:	c05ff0ef          	jal	ra,80001180 <WRITESERIAL>
+80001580:	00000013          	nop
+80001584:	00148493          	addi	s1,s1,1
+80001588:	fe0916e3          	bnez	s2,80001574 <.OP_T+0x2c>
+8000158c:	00000013          	nop
+80001590:	00012483          	lw	s1,0(sp)
+80001594:	00412903          	lw	s2,4(sp)
+80001598:	01810113          	addi	sp,sp,24
+8000159c:	2380006f          	j	800017d4 <.DONE>
+800015a0:	00000013          	nop
+
+800015a4 <.OP_R>:
+800015a4:	ff810113          	addi	sp,sp,-8
+800015a8:	00912023          	sw	s1,0(sp)
+800015ac:	01212223          	sw	s2,4(sp)
+800015b0:	807f04b7          	lui	s1,0x807f0
+800015b4:	07c06913          	ori	s2,zero,124
+800015b8:	00040503          	lb	a0,0(s0)
+800015bc:	fff90913          	addi	s2,s2,-1
+800015c0:	bc1ff0ef          	jal	ra,80001180 <WRITESERIAL>
+800015c4:	00000013          	nop
+800015c8:	00148493          	addi	s1,s1,1 # 807f0001 <SerialStat+0xc0aefc05>
+800015cc:	fe0916e3          	bnez	s2,800015b8 <.OP_R+0x14>
+800015d0:	00000013          	nop
+800015d4:	00012483          	lw	s1,0(sp)
+800015d8:	00412903          	lw	s2,4(sp)
+800015dc:	00810113          	addi	sp,sp,8
+800015e0:	1f40006f          	j	800017d4 <.DONE>
+800015e4:	00000013          	nop
+
+800015e8 <.OP_D>:
+800015e8:	ff810113          	addi	sp,sp,-8
+800015ec:	00912023          	sw	s1,0(sp)
+800015f0:	01212223          	sw	s2,4(sp)
+800015f4:	be5ff0ef          	jal	ra,800011d8 <READSERIALWORD>
+800015f8:	00000013          	nop
+800015fc:	000f64b3          	or	s1,t5,zero
+80001600:	bd9ff0ef          	jal	ra,800011d8 <READSERIALWORD>
+80001604:	00000013          	nop
+80001608:	000f6933          	or	s2,t5,zero
+8000160c:	00048503          	lb	a0,0(s1)
+80001610:	fff90913          	addi	s2,s2,-1
+80001614:	b6dff0ef          	jal	ra,80001180 <WRITESERIAL>
+80001618:	00000013          	nop
+8000161c:	00148493          	addi	s1,s1,1
+80001620:	fe0916e3          	bnez	s2,8000160c <.OP_D+0x24>
+80001624:	00000013          	nop
+80001628:	00012483          	lw	s1,0(sp)
+8000162c:	00412903          	lw	s2,4(sp)
+80001630:	00810113          	addi	sp,sp,8
+80001634:	1a00006f          	j	800017d4 <.DONE>
+80001638:	00000013          	nop
+
+8000163c <.OP_A>:
+8000163c:	ff810113          	addi	sp,sp,-8
+80001640:	00912023          	sw	s1,0(sp)
+80001644:	01212223          	sw	s2,4(sp)
+80001648:	b91ff0ef          	jal	ra,800011d8 <READSERIALWORD>
+8000164c:	00000013          	nop
+80001650:	000f64b3          	or	s1,t5,zero
+80001654:	b85ff0ef          	jal	ra,800011d8 <READSERIALWORD>
+80001658:	00000013          	nop
+8000165c:	000f6933          	or	s2,t5,zero
+80001660:	00295913          	srli	s2,s2,0x2
+80001664:	b75ff0ef          	jal	ra,800011d8 <READSERIALWORD>
+80001668:	00000013          	nop
+8000166c:	01e42023          	sw	t5,0(s0)
+80001670:	fff90913          	addi	s2,s2,-1
+80001674:	00448493          	addi	s1,s1,4
+80001678:	fe0916e3          	bnez	s2,80001664 <.OP_A+0x28>
+8000167c:	00000013          	nop
+80001680:	00012483          	lw	s1,0(sp)
+80001684:	00412903          	lw	s2,4(sp)
+80001688:	00810113          	addi	sp,sp,8
+8000168c:	1480006f          	j	800017d4 <.DONE>
+80001690:	00000013          	nop
+
+80001694 <.OP_G>:
+80001694:	b45ff0ef          	jal	ra,800011d8 <READSERIALWORD>
+80001698:	00000013          	nop
+8000169c:	00606513          	ori	a0,zero,6
+800016a0:	ae1ff0ef          	jal	ra,80001180 <WRITESERIAL>
+800016a4:	00000013          	nop
+800016a8:	000f6cb3          	or	s9,t5,zero
+800016ac:	807f00b7          	lui	ra,0x807f0
+800016b0:	00008093          	mv	ra,ra
+800016b4:	01e0a023          	sw	t5,0(ra) # 807f0000 <SerialStat+0xc0aefc04>
+800016b8:	0620ae23          	sw	sp,124(ra)
+800016bc:	0040a103          	lw	sp,4(ra)
+800016c0:	0080a183          	lw	gp,8(ra)
+800016c4:	00c0a203          	lw	tp,12(ra)
+800016c8:	0100a283          	lw	t0,16(ra)
+800016cc:	0140a303          	lw	t1,20(ra)
+800016d0:	0180a383          	lw	t2,24(ra)
+800016d4:	01c0a403          	lw	s0,28(ra)
+800016d8:	0200a483          	lw	s1,32(ra)
+800016dc:	0240a503          	lw	a0,36(ra)
+800016e0:	0280a583          	lw	a1,40(ra)
+800016e4:	02c0a603          	lw	a2,44(ra)
+800016e8:	0300a683          	lw	a3,48(ra)
+800016ec:	0340a703          	lw	a4,52(ra)
+800016f0:	0380a783          	lw	a5,56(ra)
+800016f4:	03c0a803          	lw	a6,60(ra)
+800016f8:	0400a883          	lw	a7,64(ra)
+800016fc:	0440a903          	lw	s2,68(ra)
+80001700:	0480a983          	lw	s3,72(ra)
+80001704:	04c0aa03          	lw	s4,76(ra)
+80001708:	0500aa83          	lw	s5,80(ra)
+8000170c:	0540ab03          	lw	s6,84(ra)
+80001710:	0580ab83          	lw	s7,88(ra)
+80001714:	05c0ac03          	lw	s8,92(ra)
+80001718:	0600ac83          	lw	s9,96(ra)
+8000171c:	06c0ae03          	lw	t3,108(ra)
+80001720:	0700ae83          	lw	t4,112(ra)
+80001724:	0740af03          	lw	t5,116(ra)
+80001728:	0780af83          	lw	t6,120(ra)
+8000172c:	800010b7          	lui	ra,0x80001
+80001730:	74008093          	addi	ra,ra,1856 # 80001740 <SerialStat+0xc0301344>
+80001734:	00000013          	nop
+80001738:	000c8067          	jr	s9
+8000173c:	00000013          	nop
+
+80001740 <.USERRET2>:
+80001740:	00000013          	nop
+80001744:	807f00b7          	lui	ra,0x807f0
+80001748:	00008093          	mv	ra,ra
+8000174c:	0020a223          	sw	sp,4(ra) # 807f0004 <SerialStat+0xc0aefc08>
+80001750:	0030a423          	sw	gp,8(ra)
+80001754:	0040a623          	sw	tp,12(ra)
+80001758:	0050a823          	sw	t0,16(ra)
+8000175c:	0060aa23          	sw	t1,20(ra)
+80001760:	0070ac23          	sw	t2,24(ra)
+80001764:	0080ae23          	sw	s0,28(ra)
+80001768:	0290a023          	sw	s1,32(ra)
+8000176c:	02a0a223          	sw	a0,36(ra)
+80001770:	02b0a423          	sw	a1,40(ra)
+80001774:	02c0a623          	sw	a2,44(ra)
+80001778:	02d0a823          	sw	a3,48(ra)
+8000177c:	02e0aa23          	sw	a4,52(ra)
+80001780:	02f0ac23          	sw	a5,56(ra)
+80001784:	0300ae23          	sw	a6,60(ra)
+80001788:	0510a023          	sw	a7,64(ra)
+8000178c:	0520a223          	sw	s2,68(ra)
+80001790:	0530a423          	sw	s3,72(ra)
+80001794:	0540a623          	sw	s4,76(ra)
+80001798:	0550a823          	sw	s5,80(ra)
+8000179c:	0560aa23          	sw	s6,84(ra)
+800017a0:	0570ac23          	sw	s7,88(ra)
+800017a4:	0580ae23          	sw	s8,92(ra)
+800017a8:	0790a023          	sw	s9,96(ra)
+800017ac:	07c0a623          	sw	t3,108(ra)
+800017b0:	07d0a823          	sw	t4,112(ra)
+800017b4:	07e0aa23          	sw	t5,116(ra)
+800017b8:	07f0ac23          	sw	t6,120(ra)
+800017bc:	07c0a103          	lw	sp,124(ra)
+800017c0:	00706513          	ori	a0,zero,7
+800017c4:	9bdff0ef          	jal	ra,80001180 <WRITESERIAL>
+800017c8:	00000013          	nop
+800017cc:	0080006f          	j	800017d4 <.DONE>
+800017d0:	00000013          	nop
+
+800017d4 <.DONE>:
+800017d4:	d29ff06f          	j	800014fc <SHELL>
+800017d8:	00000013          	nop
+	...
+
+80002000 <UTEST_SIMPLE>:
+80002000:	00128293          	addi	t0,t0,1
+80002004:	00008067          	ret
+80002008:	00000013          	nop
+
+8000200c <UTEST_1PTB>:
+8000200c:	040002b7          	lui	t0,0x4000
+80002010:	00000013          	nop
+80002014:	00000013          	nop
+80002018:	00000013          	nop
+8000201c:	fff28293          	addi	t0,t0,-1 # 3ffffff <INITLOCATE-0x7c000001>
+80002020:	00006313          	ori	t1,zero,0
+80002024:	00106393          	ori	t2,zero,1
+80002028:	00206e13          	ori	t3,zero,2
+8000202c:	fe0298e3          	bnez	t0,8000201c <UTEST_1PTB+0x10>
+80002030:	00000013          	nop
+80002034:	00000013          	nop
+80002038:	00008067          	ret
+8000203c:	00000013          	nop
+
+80002040 <UTEST_2DCT>:
+80002040:	010002b7          	lui	t0,0x1000
+80002044:	00106313          	ori	t1,zero,1
+80002048:	00206393          	ori	t2,zero,2
+8000204c:	00306e13          	ori	t3,zero,3
+80002050:	0063c3b3          	xor	t2,t2,t1
+80002054:	00734333          	xor	t1,t1,t2
+80002058:	0063c3b3          	xor	t2,t2,t1
+8000205c:	007e4e33          	xor	t3,t3,t2
+80002060:	01c3c3b3          	xor	t2,t2,t3
+80002064:	007e4e33          	xor	t3,t3,t2
+80002068:	01c34333          	xor	t1,t1,t3
+8000206c:	006e4e33          	xor	t3,t3,t1
+80002070:	01c34333          	xor	t1,t1,t3
+80002074:	fff28293          	addi	t0,t0,-1 # ffffff <INITLOCATE-0x7f000001>
+80002078:	fc029ce3          	bnez	t0,80002050 <UTEST_2DCT+0x10>
+8000207c:	00000013          	nop
+80002080:	00008067          	ret
+80002084:	00000013          	nop
+
+80002088 <UTEST_3CCT>:
+80002088:	040002b7          	lui	t0,0x4000
+8000208c:	00029863          	bnez	t0,8000209c <UTEST_3CCT+0x14>
+80002090:	00000013          	nop
+80002094:	00008067          	ret
+80002098:	00000013          	nop
+8000209c:	0080006f          	j	800020a4 <UTEST_3CCT+0x1c>
+800020a0:	00000013          	nop
+800020a4:	fff28293          	addi	t0,t0,-1 # 3ffffff <INITLOCATE-0x7c000001>
+800020a8:	fe5ff06f          	j	8000208c <UTEST_3CCT+0x4>
+800020ac:	fff28293          	addi	t0,t0,-1
+800020b0:	00000013          	nop
+
+800020b4 <UTEST_4MDCT>:
+800020b4:	020002b7          	lui	t0,0x2000
+800020b8:	ffc10113          	addi	sp,sp,-4
+800020bc:	00512023          	sw	t0,0(sp)
+800020c0:	00012303          	lw	t1,0(sp)
+800020c4:	fff30313          	addi	t1,t1,-1
+800020c8:	00612023          	sw	t1,0(sp)
+800020cc:	00012283          	lw	t0,0(sp)
+800020d0:	fe0296e3          	bnez	t0,800020bc <UTEST_4MDCT+0x8>
+800020d4:	00000013          	nop
+800020d8:	00410113          	addi	sp,sp,4
+800020dc:	00008067          	ret
+800020e0:	00000013          	nop
