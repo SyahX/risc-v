@@ -38,6 +38,17 @@ module detection(
                  (rs1 == ex_write_addr_i || rs2 == ex_write_addr_i)) begin
             ctrl_detection_o <= `Asserted;
         end 
+        else if (op == `JALR &&
+                 mem_ctrl_mem_read_i == `Asserted &&
+                 mem_ctrl_wb_Mem2Reg_i == `Asserted &&
+                 rs1 == mem_write_addr_i) begin
+            ctrl_detection_o <= `Asserted;
+        end
+        else if (op == `JALR &&
+                 ex_ctrl_wb_RegWrite_i == `Asserted &&
+                 rs1 == ex_write_addr_i) begin
+            ctrl_detection_o <= `Asserted;
+        end
         else begin
         	ctrl_detection_o <= `DeAsserted;	 
         end

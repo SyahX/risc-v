@@ -3,61 +3,92 @@
 `include "defines.v"
 
 module sram_ctrl (
-	input wire rst,
-	input wire clk,
+    // ctrl
+    input wire rst,
+    input wire                  mem_ctrl_ram,
 
-	input wire[`RegBus]		ram_write_data_i,
-	input wire[`RamAddrBus]	ram_addr_i,
-    input wire[3:0] 		ram_be_n_i,
-    input wire 				ram_ce_n_i,
-    input wire 				ram_oe_n_i,
-    input wire 				ram_we_n_i,
+    // ext
+    input wire[`RegBus]         ext_ram_data_i,
 
-    input wire[`RegBus]		ram_read_data_i,
-    output reg[`RegBus]		ram_write_data_o,
-    
-    output reg[`RegBus]		ram_read_data_o,
-    output reg[`RamAddrBus]	ram_addr_o,
-    output reg[3:0] 		ram_be_n_o,
-    output reg 				ram_ce_n_o,
-    output reg 				ram_oe_n_o,
-    output reg 				ram_we_n_o,
+    output reg[`RegBus]         ext_ram_data_o,
+    output reg[`RamAddrBus]     ext_ram_addr,
+    output reg[3:0]             ext_ram_be_n,
+    output reg                  ext_ram_ce_n,
+    output reg                  ext_ram_oe_n,
+    output reg                  ext_ram_we_n,
 
-    output wire				ram_finish_o
+    // base
+    input wire[`RegBus]         base_ram_data_i,
+
+    output reg[`RegBus]         base_ram_data_o,
+    output reg[`RamAddrBus]     base_ram_addr,
+    output reg[3:0]             base_ram_be_n,
+    output reg                  base_ram_ce_n,
+    output reg                  base_ram_oe_n,
+    output reg                  base_ram_we_n,
+
+	// rom
+    input wire[`RamAddrBus]     rom_addr,
+    input wire                  rom_ce_n,
+    output reg[`RegBus]         rom_data_i,
+
+    // ram
+    input wire[`RegBus]         ram_data_o,
+    input wire[`RamAddrBus]     ram_addr,
+    input wire[3:0]             ram_be_n,
+    input wire                  ram_ce_n,
+    input wire                  ram_oe_n,
+    input wire                  ram_we_n,
+    output reg[`RegBus]         ram_data_i
 );
-	assign ram_finish_o = `DeAsserted;
-
-	always @ (*) begin
-		if (rst == `Asserted) begin
-			ram_ce_n_o <= `Asserted;
-			ram_oe_n_o <= `Asserted;
-			ram_we_n_o <= `Asserted;
-
-			ram_read_data_o <= `High;
-		end
-		else begin
-			ram_addr_o <= ram_addr_i;
-			ram_be_n_o <= ram_be_n_i;
-			ram_ce_n_o <= ram_ce_n_i;
-			ram_oe_n_o <= ram_oe_n_i;
-			ram_we_n_o <= ram_we_n_i;
-
-			if (ram_oe_n_i == `DeAsserted) begin
-				ram_read_data_o <= ram_read_data_i;
-			end
-			else begin
-				ram_read_data_o <= `High;
-			end
-		end
-	end
-
-	always @ (negedge clk) begin
-		if (rst == `DeAsserted && ram_we_n_i == `DeAsserted) begin
-			ram_write_data_o <= ram_write_data_i;
-		end
-		else begin
-			ram_write_data_o <= `High;
-		end
-	end
+    always @ (*) begin
+        if (rst == `DeAsserted) begin
+            if (mem_ctrl_ram == `Asserted) begin
+                ext_ram_data_o <= ram_data_o;
+                ram_data_i <= ext_ram_data_i;
+                ext_ram_addr <= ram_addr;
+                ext_ram_be_n <= ram_be_n;
+                ext_ram_ce_n <= ram_ce_n;
+                ext_ram_oe_n <= ram_oe_n;
+                ext_ram_we_n <= ram_we_n;
+    
+                base_ram_ce_n <= `Asserted;
+                base_ram_oe_n <= `Asserted;
+                base_ram_we_n <= `Asserted;
+                base_ram_data_o <= `High;
+            end
+            else begin
+                base_ram_data_o <= ram_data_o;
+                ram_data_i <= base_ram_data_i;
+                base_ram_addr <= ram_addr;
+                base_ram_be_n <= ram_be_n;
+                base_ram_ce_n <= ram_ce_n;
+                base_ram_oe_n <= ram_oe_n;
+                base_ram_we_n <= ram_we_n;
+    
+                ext_ram_data_o <= `High;
+                rom_data_i <= ext_ram_data_i;
+                ext_ram_addr <= rom_addr;
+                ext_ram_be_n <= 4'b0000;
+                ext_ram_ce_n <= rom_ce_n;
+                ext_ram_oe_n <= `DeAsserted;
+                ext_ram_we_n <= `Asserted;
+            end
+        end
+        else begin
+            base_ram_data_o <= `High;
+            base_ram_ce_n <= `Asserted;
+            base_ram_oe_n <= `Asserted;
+            base_ram_we_n <= `Asserted;
+            
+            ext_ram_data_o <= `High;
+            rom_data_i <= ext_ram_data_i;
+            ext_ram_addr <= rom_addr;
+            ext_ram_be_n <= 4'b0000;
+            ext_ram_ce_n <= rom_ce_n;
+            ext_ram_oe_n <= `DeAsserted;
+            ext_ram_we_n <= `Asserted;
+        end
+    end
 
 endmodule

@@ -30,19 +30,22 @@ module risc_min_sopc(
         .clk_11M(clk_11M),
         .rst(rst),
         
-        // rom
-        .rom_addr_o(inst_addr),
-        .rom_data_i(inst),
-        .rom_ce_o(rom_ce),
+        .ext_ram_data(inst),
+        
+        .ext_ram_addr(inst_addr),
+        //.ext_ram_be_n(ext_ram_be_n),
+        .ext_ram_ce_n(rom_ce),
+        //.ext_ram_oe_n(ext_ram_oe_n),
+        //.ext_ram_we_n(ext_ram_we_n),
 
-        // ram
-        .ram_data(ram_data),
+        // base
+        .base_ram_data(ram_data),
 
-        .ram_addr(ram_addr),
-        .ram_be_n(ram_be_n),
-        .ram_ce_n(ram_ce_n),
-        .ram_oe_n(ram_oe_n),
-        .ram_we_n(ram_we_n),
+        .base_ram_addr(ram_addr),
+        .base_ram_be_n(ram_be_n),
+        .base_ram_ce_n(ram_ce_n),
+        .base_ram_oe_n(ram_oe_n),
+        .base_ram_we_n(ram_we_n),
 
         // uart
         .uart_data(uart_data),

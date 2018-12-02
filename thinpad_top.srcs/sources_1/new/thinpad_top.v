@@ -79,31 +79,31 @@ module thinpad_top(
     output wire video_clk,         //像素时钟输出
     output wire video_de           //行数据有效信号，用于区分消隐区
 );
-    
-    assign ext_ram_oe_n = `DeAsserted;
-    assign ext_ram_we_n = `Asserted;
-    assign ext_ram_be_n = 4'b0000;
-    //wire [2:0] debug;
-    //assign leds = {debug, uart_rdn, uart_wrn, uart_dataready, uart_tbre, uart_tsre, base_ram_data[7:0]};
 
     risc risc0(
-		.clk(clk_11M0592),
+		.clk(clock_btn),
 		.clk_11M(clk_11M0592),
         .rst(reset_btn),
         
         .debug(leds),
         
-        .rom_addr_o(ext_ram_addr),
-        .rom_data_i(ext_ram_data),
-        .rom_ce_o(ext_ram_ce_n),
+        // ext
+        .ext_ram_data(ext_ram_data),
 
-        .ram_data(base_ram_data),
+        .ext_ram_addr(ext_ram_addr),
+        .ext_ram_be_n(ext_ram_be_n),
+        .ext_ram_ce_n(ext_ram_ce_n),
+        .ext_ram_oe_n(ext_ram_oe_n),
+        .ext_ram_we_n(ext_ram_we_n),
 
-        .ram_addr(base_ram_addr),
-        .ram_be_n(base_ram_be_n),
-        .ram_ce_n(base_ram_ce_n),
-        .ram_oe_n(base_ram_oe_n),
-        .ram_we_n(base_ram_we_n),
+        // base
+        .base_ram_data(base_ram_data),
+
+        .base_ram_addr(base_ram_addr),
+        .base_ram_be_n(base_ram_be_n),
+        .base_ram_ce_n(base_ram_ce_n),
+        .base_ram_oe_n(base_ram_oe_n),
+        .base_ram_we_n(base_ram_we_n),
         
         // uart
         .uart_data(base_ram_data[7:0]),
@@ -114,6 +114,7 @@ module thinpad_top(
         .uart_rdn(uart_rdn),
         .uart_wrn(uart_wrn)
 	);
+    
 /* =========== Demo code begin =========== 
 
 // PLL分频示例
