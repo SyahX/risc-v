@@ -80,40 +80,13 @@ module thinpad_top(
     output wire video_de           //行数据有效信号，用于区分消隐区
 );
     
-    wire sram_ctrl;
-    // rom
-    wire[`RegBus]        rom_data,
-    wire[19:0]           rom_addr,
-    wire                 rom_ce_n,
-    // ram
-    wire[`RegBus]        ram_data,
-    wire[`RamAddrBus]    ram_addr,
-    wire[3:0]            ram_be_n,
-    wire                 ram_ce_n,
-    wire                 ram_oe_n,
-    wire                 ram_we_n,
     
-    assign ext_ram_data = 
-    assign ext_ram_oe_n = sram_ctrl ? ram_oe_n : `DeAsserted;
-    assign ext_ram_we_n = `Asserted;
-    assign ext_ram_be_n = 4'b0000;
-
-    assign ext_ram_data = sram_ctrl ? ram_data : rom_data;
-    assign ext_ram_addr = sram_ctrl ? ram_addr : rom_addr;
-    assign ext_ram_be_n = sram_ctrl ? ram_be_n : 4'b0000;
-    assign ext_ram_ce_n = sram_ctrl ? ram_ce_n : `DeAsserted;
-    assign ext_ram_oe_n = sram_ctrl ? ram_oe_n : `DeAsserted;
-    assign ext_ram_we_n = sram_ctrl ? ram_we_n : `Asserted;
-
-    assign base_ram_data = sram_ctrl ? `High     : ram_data;
-    assign base_ram_addr = sram_ctrl ? 20'hzzzzz : ram_addr;
-    assign base_ram_be_n = sram_ctrl ? 4'b1111   : ram_be_n;
-    assign base_ram_ce_n = sram_ctrl ? `Asserted : ram_ce_n;
-    assign base_ram_oe_n = sram_ctrl ? `Asserted : ram_oe_n;
-    assign base_ram_we_n = sram_ctrl ? `Asserted : ram_we_n;
+    
     //wire [2:0] debug;
     //assign leds = {debug, uart_rdn, uart_wrn, uart_dataready, uart_tbre, uart_tsre, base_ram_data[7:0]};
 
+    wire sram_ctrl;
+    
     risc risc0(
 		.clk(clk_11M0592),
 		.clk_11M(clk_11M0592),
@@ -124,19 +97,21 @@ module thinpad_top(
         .sram_ctrl(sram_ctrl),
         
         // rom
-        .rom_data(rom_data),
+        .rom_data_i(ext_ram_data),
+        .rom_data_o(ext_ram_data),
 
-        .rom_addr(rom_addr),
-        .rom_ce_n(rom_ce_n),
+        .rom_addr(ext_ram_addr),
+        .rom_ce_n(ext_ram_ce_n),
 
         // ram
-        .ram_data(ram_data),
+        .ram_data_i(base_ram_data),
+        .ram_data_o(base_ram_data),
 
-        .ram_addr(ram_addr),
-        .ram_be_n(ram_be_n),
-        .ram_ce_n(ram_ce_n),
-        .ram_oe_n(ram_oe_n),
-        .ram_we_n(ram_we_n),
+        .ram_addr(base_ram_addr),
+        .ram_be_n(base_ram_be_n),
+        .ram_ce_n(base_ram_ce_n),
+        .ram_oe_n(base_ram_oe_n),
+        .ram_we_n(base_ram_we_n),
         
         // uart
         .uart_data(base_ram_data[7:0]),

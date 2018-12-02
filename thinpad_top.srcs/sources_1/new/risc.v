@@ -12,13 +12,15 @@ module risc (
 	output wire 				sram_ctrl,
 
 	// rom
-	inout  wire[`RegBus]		rom_data,
+	input wire[`RegBus]		    rom_data_i,
+	output wire[`RegBus]		rom_data_o,
 
 	output wire[19:0]		    rom_addr,
 	output wire					rom_ce_n,
 
 	// ram
-	inout wire[`RegBus] 		ram_data,
+	input wire[`RegBus] 		ram_data_i,
+	output wire[`RegBus] 		ram_data_o,
 
 	output wire[`RamAddrBus] 	ram_addr,
     output wire[3:0] 			ram_be_n,
@@ -191,7 +193,7 @@ module risc (
 		.ctrl_if_flush(ctrl_if_flush),
 		.if_id_hold(if_id_hold),
 		.if_pc(pc),
-		.if_inst(rom_data),
+		.if_inst(rom_data_i),
 
 		.id_pc(id_pc_i),
 		.id_inst(id_inst_i)
@@ -506,7 +508,10 @@ module risc (
 
 		.mem_read_data_o(mem_mem_read_data_o),
 
-		.alu_result_o(mem_alu_result_o)
+		.alu_result_o(mem_alu_result_o),
+		
+		// sram ctrl
+		.mem_ctrl_ram(mem_ctrl_ram)
 	);
 
 	sram_ctrl sram_ctrl0(
@@ -520,11 +525,11 @@ module risc (
 		.ram_oe_n_i(mem_ram_oe_n),
 		.ram_we_n_i(mem_ram_we_n),
 
-		.ram_read_data_i(ram_data),
+		.ram_read_data_i(ram_data_i),
 		.ram_read_data_o(mem_data_bus),
 		
 
-		.ram_write_data_o(ram_data),
+		.ram_write_data_o(ram_data_o),
 		.ram_addr_o(ram_addr),
 		.ram_be_n_o(ram_be_n),
 		.ram_ce_n_o(ram_ce_n),
@@ -563,9 +568,7 @@ module risc (
 		.uart_write_data_o(uart_data),
 		.rdn_o(uart_rdn),
 		.wrn_o(uart_wrn),
-		.uart_finish_o(uart_finish),
-
-		.mem_ctrl_ram(mem_ctrl_ram)
+		.uart_finish_o(uart_finish)
 	);
 
 	assign mem_wb_hold = mem_finish_o;
