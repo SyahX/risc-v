@@ -3,16 +3,11 @@
 `include "defines.v"
 
 module ex (
-	input wire rst,
-
 	// input control
 	input wire 					ctrl_ex_AluSrc_i,
 
 	// input alu
 	input wire[`AluCtrlBus] 	alu_ctrl_i,
-	
-	// input of pc
-	input wire[`InstAddrBus]	pc_i,
 
 	// input resgiter
 	input wire[`RegBus]			reg1_data_i,

@@ -10,12 +10,12 @@ module risc (
 	output wire[15:0]           debug,
 
 	// rom
-	input  wire[`RegBus]		rom_data_i,
-	output wire[`RegBus]		rom_addr_o,
+	inout  wire[`RegBus]		rom_data_i,
+	output wire[19:0]		    rom_addr_o,
 	output wire					rom_ce_o,
 
 	// ram
-	input wire[`RegBus] 		ram_data,
+	inout wire[`RegBus] 		ram_data,
 
 	output wire[`RamAddrBus] 	ram_addr,
     output wire[3:0] 			ram_be_n,
@@ -24,7 +24,7 @@ module risc (
     output wire 				ram_we_n,
 
     // uart
-    input wire[7:0]				uart_data,
+    inout wire[7:0]			    uart_data,
     input wire 					uart_data_ready,
     input wire 					uart_tbre,
     input wire 					uart_tsre,
@@ -39,7 +39,6 @@ module risc (
 	wire[`InstAddrBus] next_pc_i;
 	assign next_pc_i = pc + 4;
 	assign rom_addr_o = pc[21:2];
-	assign debug = pc[15:0];
 	
 	// if_id
 	wire ctrl_if_flush;
@@ -164,6 +163,7 @@ module risc (
 	wire[`RegBus] wb_write_data_o;
 
 	assign pc_hold_i = id_ctrl_hold | ex_ctrl_hold;
+	assign debug = {ctrl_pc_src, pc[16:2]};
 	pc_reg pc_reg0(
 		.clk(clk),
 		.rst(rst),
@@ -207,6 +207,7 @@ module risc (
 	);
 
 	control ctrl0(
+	    .ctrl_mux_i(id_ctrl_hold),
 		.inst_i(id_inst_i),
 
 		.ctrl_wb_RegWrite_o(id_ctrl_wb_RegWrite_o),
@@ -384,12 +385,10 @@ module risc (
 	);
 
 	ex ex0(
-		.rst(rst),
-
 		.ctrl_ex_AluSrc_i(ex_ctrl_ex_AluSrc_i),
 
 		.alu_ctrl_i(alu_ctrl),
-
+        
 		.reg1_data_i(ex_reg1_data),
 		.reg2_data_i(ex_reg2_data),
 
@@ -509,7 +508,6 @@ module risc (
 		.rst(mem_ram_use),
 		.clk(clk),
 		
-		
 		.ram_write_data_i(mem_data_bus),
 		.ram_addr_i(mem_ram_addr),
 		.ram_be_n_i(mem_ram_be_n),
@@ -543,6 +541,7 @@ module risc (
 	);
 
 	uart_ctrl uart_ctrl0(
+	    //.debug(debug),
 		.rst(mem_uart_use),
 		.clk(clk_11M),
 

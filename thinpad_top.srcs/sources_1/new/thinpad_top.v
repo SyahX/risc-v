@@ -52,7 +52,7 @@ module thinpad_top(
 
     //USB 控制器信号，参考 SL811 芯片手册
     output wire sl811_a0,
-    //inout  wire[7:0] sl811_d,     //USB数据线与网络控制器的dm9k_sd[7:0]共享
+    inout  wire[7:0] sl811_d,     //USB数据线与网络控制器的dm9k_sd[7:0]共享
     output wire sl811_wr_n,
     output wire sl811_rd_n,
     output wire sl811_cs_n,
@@ -83,9 +83,11 @@ module thinpad_top(
     assign ext_ram_oe_n = `DeAsserted;
     assign ext_ram_we_n = `Asserted;
     assign ext_ram_be_n = 4'b0000;
+    //wire [2:0] debug;
+    //assign leds = {debug, uart_rdn, uart_wrn, uart_dataready, uart_tbre, uart_tsre, base_ram_data[7:0]};
 
     risc risc0(
-		.clk(clock_btn),
+		.clk(clk_11M0592),
 		.clk_11M(clk_11M0592),
         .rst(reset_btn),
         

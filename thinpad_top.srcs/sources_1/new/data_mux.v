@@ -32,6 +32,9 @@ module data_mux(
 		else if (alu_mux1_i == 2'b10) begin
 			reg1_data_o <= wb_reg1_data_i;
 		end
+		else begin
+		    reg1_data_o <= `ZeroWord;
+		end
 	end
 
 	always @ (*) begin
@@ -44,6 +47,9 @@ module data_mux(
 		else if (alu_mux2_i == 2'b10) begin
 			reg2_data_o <= wb_reg2_data_i;
 		end
+		else begin
+            reg2_data_o <= `ZeroWord;
+        end
 	end
 
 endmodule

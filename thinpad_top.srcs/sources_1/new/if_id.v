@@ -16,13 +16,19 @@ module if_id(
 );
 
 	always @ (posedge clk) begin
-		if (rst == `Asserted || ctrl_if_flush == `Asserted) begin
+		if (rst == `Asserted) begin
 			id_pc <= `ZeroWord;
 			id_inst <= `ZeroWord;
 		end 
 		else if (if_id_hold == `DeAsserted) begin
-			id_pc <= if_pc;
-			id_inst <= if_inst;
+		    if (ctrl_if_flush == `Asserted) begin
+		        id_pc <= `ZeroWord;
+		        id_inst <= `ZeroWord;
+		    end
+		    else begin
+		        id_pc <= if_pc;
+			    id_inst <= if_inst;
+			end
 		end 
 	end
 

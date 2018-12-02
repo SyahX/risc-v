@@ -1,0 +1,1 @@
+rm *.S *.bin *.data
