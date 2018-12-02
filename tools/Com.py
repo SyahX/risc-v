@@ -12,5 +12,5 @@ if __name__ == "__main__":
     tty.reset_input_buffer()
     while(True):
         print ("fuck")
-        a = tty.read(1)
+        a = tty.read(4)
         print (hex(byte_string_to_int(a)))

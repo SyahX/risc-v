@@ -624,6 +624,8 @@ module risc (
 	);
 
 	sram_ctrl sram_ctrl0(
+	    .rst(mem_ram_use),
+	    .mem_ctrl_ram(mem_ctrl_ram),
 		// ext
         .ext_ram_data_i(ext_ram_data),
 
@@ -645,9 +647,9 @@ module risc (
         .base_ram_we_n(base_ram_we_n),
 		
 		// rom
-		rom_addr(rom_addr),
-		rom_ce_n(rom_ce_n),
-		rom_data_i(rom_data_i),
+		.rom_addr(rom_addr),
+		.rom_ce_n(rom_ce_n),
+		.rom_data_i(rom_data_i),
 
 		// ram input 
 		.ram_data_o(ram_data_o),

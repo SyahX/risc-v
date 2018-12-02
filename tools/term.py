@@ -465,7 +465,7 @@ def Main(welcome_message=True):
     #debug
     # welcome_message = False
     if welcome_message:
-        print(inp.read(33))
+        print(inp.read(1))
     MainLoop()
 
 # QEMU uses this, but our team haven't use this, can not guarantee it's right

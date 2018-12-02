@@ -4,6 +4,7 @@
 
 module sram_ctrl (
     // ctrl
+    input wire rst,
     input wire                  mem_ctrl_ram,
 
     // ext
@@ -41,28 +42,45 @@ module sram_ctrl (
     output reg[`RegBus]         ram_data_i
 );
     always @ (*) begin
-        if (mem_ctrl_ram == `Asserted) begin
-            ext_ram_data_o <= ram_data_o;
-            ram_data_i <= ext_ram_data_i;
-            ext_ram_addr <= ram_addr;
-            ext_ram_be_n <= ram_be_n;
-            ext_ram_ce_n <= ram_ce_n;
-            ext_ram_oe_n <= ram_oe_n;
-            ext_ram_we_n <= ram_we_n;
-
+        if (rst == `DeAsserted) begin
+            if (mem_ctrl_ram == `Asserted) begin
+                ext_ram_data_o <= ram_data_o;
+                ram_data_i <= ext_ram_data_i;
+                ext_ram_addr <= ram_addr;
+                ext_ram_be_n <= ram_be_n;
+                ext_ram_ce_n <= ram_ce_n;
+                ext_ram_oe_n <= ram_oe_n;
+                ext_ram_we_n <= ram_we_n;
+    
+                base_ram_ce_n <= `Asserted;
+                base_ram_oe_n <= `Asserted;
+                base_ram_we_n <= `Asserted;
+                base_ram_data_o <= `High;
+            end
+            else begin
+                base_ram_data_o <= ram_data_o;
+                ram_data_i <= base_ram_data_i;
+                base_ram_addr <= ram_addr;
+                base_ram_be_n <= ram_be_n;
+                base_ram_ce_n <= ram_ce_n;
+                base_ram_oe_n <= ram_oe_n;
+                base_ram_we_n <= ram_we_n;
+    
+                ext_ram_data_o <= `High;
+                rom_data_i <= ext_ram_data_i;
+                ext_ram_addr <= rom_addr;
+                ext_ram_be_n <= 4'b0000;
+                ext_ram_ce_n <= rom_ce_n;
+                ext_ram_oe_n <= `DeAsserted;
+                ext_ram_we_n <= `Asserted;
+            end
+        end
+        else begin
+            base_ram_data_o <= `High;
             base_ram_ce_n <= `Asserted;
             base_ram_oe_n <= `Asserted;
             base_ram_we_n <= `Asserted;
-        end
-        else begin
-            base_ram_data_o <= ram_data_o;
-            ram_data_i <= base_ram_data_i;
-            base_ram_addr <= ram_addr;
-            base_ram_be_n <= ram_be_n;
-            base_ram_ce_n <= ram_ce_n;
-            base_ram_oe_n <= ram_oe_n;
-            base_ram_we_n <= ram_we_n;
-
+            
             ext_ram_data_o <= `High;
             rom_data_i <= ext_ram_data_i;
             ext_ram_addr <= rom_addr;
