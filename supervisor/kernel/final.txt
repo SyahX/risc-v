@@ -6,7 +6,7 @@ Disassembly of section .text.init:
 
 80000000 <INITLOCATE>:
 80000000:	80001d37          	lui	s10,0x80001
-80000004:	274d0d13          	addi	s10,s10,628 # 80001274 <SerialStat+0xc0300e78>
+80000004:	338d0d13          	addi	s10,s10,824 # 80001338 <SerialStat+0xc0300f3c>
 80000008:	000d0067          	jr	s10
 8000000c:	00000013          	nop
 

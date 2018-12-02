@@ -15,7 +15,8 @@ current:
 //monitor_version:
 //    .asciz "MONITOR for RISC-V - initialized."
     .word _sbss                     # the start address of .bss, defined in linker script
-    .word _ebss                     # the end address of .bss, defined in linker script
+    .word _ebss 
+    .globl WELCOME                    # the end address of .bss, defined in linker script
     .globl START
 START:
     lui s10, %hi(_sbss)
