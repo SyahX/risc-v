@@ -81,7 +81,7 @@ module thinpad_top(
 );
 
     risc risc0(
-		.clk(clock_btn),
+		.clk(clk_11M0592),
 		.clk_11M(clk_11M0592),
         .rst(reset_btn),
         
