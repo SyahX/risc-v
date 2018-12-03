@@ -103,6 +103,9 @@ module mem (
 			mem_ram_ce_n_o <= `Asserted;
 			mem_ram_oe_n_o <= `Asserted;
 			mem_ram_we_n_o <= `Asserted;
+			
+			mem_ram_addr_o <= 20'hzzzzz;
+			mem_ram_be_n_o <= 4'b1111;
 		end
 	end
 
@@ -123,12 +126,12 @@ module mem (
                     mem_write_data_o <= mem_write_data_i;
                 end
                 default : begin
-                    mem_write_data_o <= 32'bz;
+                    mem_write_data_o <= `High;
                 end
             endcase
 		end
 		else begin
-		    mem_write_data_o <= 32'bz;
+		    mem_write_data_o <= `High;
 		end
 	end
 

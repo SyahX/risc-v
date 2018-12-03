@@ -44,8 +44,18 @@ module sram_ctrl (
     always @ (*) begin
         if (rst == `DeAsserted) begin
             if (mem_ctrl_ram == `Asserted) begin
-                ext_ram_data_o <= ram_data_o;
-                ram_data_i <= ext_ram_data_i;
+                if (ram_we_n == `DeAsserted) begin
+                    ext_ram_data_o <= ram_data_o;
+                    ram_data_i <= `High;
+                end
+                else if (ram_oe_n == `DeAsserted) begin
+                    ext_ram_data_o <= `High;
+                    ram_data_i <= ext_ram_data_i;
+                end
+                else begin
+                    ext_ram_data_o <= `High;
+                    ram_data_i <= `High;
+                end
                 ext_ram_addr <= ram_addr;
                 ext_ram_be_n <= ram_be_n;
                 ext_ram_ce_n <= ram_ce_n;
@@ -58,8 +68,18 @@ module sram_ctrl (
                 base_ram_data_o <= `High;
             end
             else begin
-                base_ram_data_o <= ram_data_o;
-                ram_data_i <= base_ram_data_i;
+                if (ram_we_n == `DeAsserted) begin
+                    base_ram_data_o <= ram_data_o;
+                    ram_data_i <= `High;
+                end
+                else if (ram_oe_n == `DeAsserted) begin
+                    base_ram_data_o <= `High;
+                    ram_data_i <= base_ram_data_i;
+                end
+                else begin
+                    base_ram_data_o <= `High;
+                    ram_data_i <= `High;
+                end
                 base_ram_addr <= ram_addr;
                 base_ram_be_n <= ram_be_n;
                 base_ram_ce_n <= ram_ce_n;
@@ -77,6 +97,8 @@ module sram_ctrl (
         end
         else begin
             base_ram_data_o <= `High;
+            base_ram_addr <= 20'hzzzzz;
+            ram_data_i <= `High;
             base_ram_ce_n <= `Asserted;
             base_ram_oe_n <= `Asserted;
             base_ram_we_n <= `Asserted;

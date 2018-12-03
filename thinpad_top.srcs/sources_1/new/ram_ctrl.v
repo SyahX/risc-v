@@ -31,32 +31,36 @@ module ram_ctrl (
 		if (rst == `Asserted) begin
 			ram_ce_n_o <= `Asserted;
 			ram_oe_n_o <= `Asserted;
-			ram_we_n_o <= `Asserted;
-
-			ram_read_data_o <= `High;
+            ram_we_n_o <= `Asserted;	
 		end
 		else begin
 			ram_addr_o <= ram_addr_i;
 			ram_be_n_o <= ram_be_n_i;
 			ram_ce_n_o <= ram_ce_n_i;
 			ram_oe_n_o <= ram_oe_n_i;
-			ram_we_n_o <= ram_we_n_i;
-
-			if (ram_oe_n_i == `DeAsserted) begin
-				ram_read_data_o <= ram_read_data_i;
-			end
-			else begin
-				ram_read_data_o <= `High;
-			end
+            ram_we_n_o <= ram_we_n_i;
+			
 		end
 	end
 
 	always @ (negedge clk) begin
-		if (rst == `DeAsserted && ram_we_n_i == `DeAsserted) begin
-			ram_write_data_o <= ram_write_data_i;
+		if (rst == `DeAsserted) begin
+			if (ram_we_n_o == `DeAsserted) begin	
+			    ram_write_data_o <= ram_write_data_i;
+			    ram_read_data_o <= `High;
+			end
+			else if (ram_oe_n_o == `DeAsserted) begin
+			    ram_write_data_o <= `High;
+                ram_read_data_o <= ram_read_data_i;
+			end
+			else begin
+			    ram_write_data_o <= `High;
+                ram_read_data_o <= `High;
+			end
 		end
 		else begin
 			ram_write_data_o <= `High;
+            ram_read_data_o <= `High;
 		end
 	end
 

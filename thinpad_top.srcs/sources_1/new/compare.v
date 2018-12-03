@@ -28,6 +28,9 @@ module compare (
 		else if (op == `JALR) begin
 			branch_pc_o <= (branch_imm_i + reg1_data_i) & 32'hfffffffe;
 		end
+		else begin
+		    branch_pc_o <= `ZeroWord;      
+		end
 	end
 
 	// compare
