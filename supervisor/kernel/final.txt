@@ -274,7 +274,7 @@ Disassembly of section .text:
 80001524 <SHELL>:
 80001524:	c89ff0ef          	jal	ra,800011ac <READSERIAL>
 80001528:	00000013          	nop
-8000152c:	0059a023          	sw	t0,0(s3)
+8000152c:	01e9a023          	sw	t5,0(s3)
 80001530:	00498993          	addi	s3,s3,4
 80001534:	05206293          	ori	t0,zero,82
 80001538:	085f0e63          	beq	t5,t0,800015d4 <.OP_R>
@@ -323,9 +323,9 @@ Disassembly of section .text:
 800015d4:	ff810113          	addi	sp,sp,-8
 800015d8:	00912023          	sw	s1,0(sp)
 800015dc:	01212223          	sw	s2,4(sp)
-800015e0:	807f04b7          	lui	s1,0x807f0
+800015e0:	000004b7          	lui	s1,0x0
 800015e4:	07c06913          	ori	s2,zero,124
-800015e8:	00048503          	lb	a0,0(s1) # 807f0000 <SerialStat+0xc0aefc04>
+800015e8:	00048503          	lb	a0,0(s1) # 0 <INITLOCATE-0x80000000>
 800015ec:	fff90913          	addi	s2,s2,-1
 800015f0:	b91ff0ef          	jal	ra,80001180 <WRITESERIAL>
 800015f4:	00000013          	nop

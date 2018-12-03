@@ -27,7 +27,7 @@ SHELL:
     jal READSERIAL                  // 读操作符
     nop
     
-    sw t0, 0(s3)                   // DEBUG
+    sw t5, 0(s3)                   // DEBUG
     addi s3, s3, 4                 // DEBUG
 
     ori t0, zero, SH_OP_R
@@ -83,7 +83,8 @@ SHELL:
     sw s1, 0(sp)
     sw s2, 4(sp)
 
-    lui s1, %hi(uregs)
+    lui s1, 0                       // DEBUG
+    // lui s1, %hi(uregs)
     ori s2, zero, 124               // 计数器，打印124字节
 .LC0:
     lb a0, %lo(uregs)(s1)           // 读取字节
