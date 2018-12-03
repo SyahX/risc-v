@@ -79,7 +79,6 @@ def InitializeTCP(host_port):
     return True
 
 if __name__ == "__main__":
-<<<<<<< HEAD
     tty = serial.Serial(port="/dev/ttyACM0", baudrate=9600)
     tty.reset_input_buffer()
 
@@ -87,18 +86,6 @@ if __name__ == "__main__":
         # print ("fuck")
         x = input("fuck : ")
         tty.write(int_to_byte_string(int(x))[0])
-=======
-    # tty = serial.Serial(port="/dev/ttyACM0", baudrate=9600)
-    # tty.reset_input_buffer()
-    if not InitializeTCP("166.111.227.237:42645"):
-        print("Connect to TCP failed!")
-        exit(1)
-    while(True):
-        # print ("fuck")
-        x = input("fuck : ")
-        a = int_to_byte_string(int(x))
-        outp.write(a)
->>>>>>> huangyf
         print (hex(x))
         print (byte_string_to_int(a))
         print(ord(a[0]))
