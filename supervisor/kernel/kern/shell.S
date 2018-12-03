@@ -172,7 +172,7 @@ SHELL:
     jal WRITESERIAL                 // 告诉终端用户程序开始运行
     nop
 
-    or s9, t5, zero                 // 用户程序入口写入s9寄存器
+    or s10, t5, zero                 // 用户程序入口写入s9寄存器
     lui ra, %hi(uregs)              // 定位用户空间寄存器备份地址
     addi ra, ra, %lo(uregs)
     sw t5, PUTREG(1)(ra)           // 保存用户程序入口
@@ -203,8 +203,8 @@ SHELL:
     lw x23, PUTREG(23)(ra)
     lw x24, PUTREG(24)(ra)
     lw x25, PUTREG(25)(ra)
-    lw x26, PUTREG(26)(ra)
-    lw x27, PUTREG(27)(ra)
+    //lw x26, PUTREG(26)(ra)
+    //lw x27, PUTREG(27)(ra)
     lw x28, PUTREG(28)(ra)
     lw x29, PUTREG(29)(ra)
     lw x30, PUTREG(30)(ra)
@@ -214,7 +214,7 @@ SHELL:
     addi ra, ra, %lo(.USERRET2)
     nop
 
-    jr s9
+    jr s10
     nop                             //运行用户程序
 
 .USERRET2:
@@ -248,8 +248,8 @@ SHELL:
     sw x23, PUTREG(23)(ra)
     sw x24, PUTREG(24)(ra)
     sw x25, PUTREG(25)(ra)
-    sw x26, PUTREG(26)(ra)
-    sw x27, PUTREG(27)(ra)
+    //sw x26, PUTREG(26)(ra)
+    //sw x27, PUTREG(27)(ra)
     sw x28, PUTREG(28)(ra)
     sw x29, PUTREG(29)(ra)
     sw x30, PUTREG(30)(ra)
