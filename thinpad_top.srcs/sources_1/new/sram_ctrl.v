@@ -66,6 +66,9 @@ module sram_ctrl (
                 base_ram_oe_n <= `Asserted;
                 base_ram_we_n <= `Asserted;
                 base_ram_data_o <= `High;
+                base_ram_addr <= 20'hzzzzz;
+                base_ram_be_n <= 4'b1111;
+                rom_data_i <= 20'hzzzzz;
             end
             else begin
                 if (ram_we_n == `DeAsserted) begin

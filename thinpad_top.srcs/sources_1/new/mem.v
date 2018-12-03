@@ -196,8 +196,12 @@ module mem (
 					end
 				end
 				default : begin
+				    mem_read_data_o <= `High;
 				end
 			endcase
+		end
+		else begin
+		    mem_read_data_o <= `High;
 		end
 	end
 
