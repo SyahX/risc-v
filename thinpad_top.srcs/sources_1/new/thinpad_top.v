@@ -80,11 +80,12 @@ module thinpad_top(
     output wire video_de           //行数据有效信号，用于区分消隐区
 );
     wire[15:0] debug;
-    assign leds = {debug[2:0], uart_rdn, uart_wrn, uart_dataready, uart_tbre, uart_tsre, base_ram_data[7:0]};
-
+    //assign leds = {debug[2:0], uart_rdn, uart_wrn, uart_dataready, uart_tbre, uart_tsre, base_ram_data[7:0]};
+    assign leds = debug;
+    
     risc risc0(
-		.clk(clock_btn),
-		.clk_11M(clock_btn),
+		.clk(clk_11M0592),
+		.clk_11M(clk_11M0592),
         .rst(reset_btn),
         
         .debug(debug),

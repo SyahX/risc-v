@@ -19,7 +19,7 @@ module uart (
 		if (uart_rdn == `DeAsserted) begin
 			uart_tbre <= `DeAsserted;
 			uart_tsre <= `DeAsserted;
-			uart_data_o <= data;
+			uart_data_o <= 8'h43;
 			uart_data_ready <= `Asserted;
 		end 
 		else if (uart_wrn == `DeAsserted) begin
@@ -33,7 +33,7 @@ module uart (
 			uart_tbre <= `Asserted;
 			uart_tsre <= `Asserted;
 			uart_data_o <= 8'hzz;
-			uart_data_ready <= `DeAsserted;
+			uart_data_ready <= `Asserted;
 		end
 	end
 

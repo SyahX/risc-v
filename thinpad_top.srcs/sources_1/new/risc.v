@@ -183,10 +183,9 @@ module risc (
 
 	assign rom_addr = pc[21:2];
 
-
 	// main
 	assign pc_hold_i = id_ctrl_hold | ex_ctrl_hold | mem_ctrl_ram;
-	//assign debug = {ctrl_pc_src, pc[16:2]};
+	assign debug = {ctrl_pc_src, pc[16:2]};
 	pc_reg pc_reg0(
 		.clk(clk),
 		.rst(rst),
@@ -566,7 +565,7 @@ module risc (
 	);
 
 	uart_ctrl uart_ctrl0(
-	    .debug(debug[2:0]),
+	    //.debug(debug),
 		.rst(mem_uart_use),
 		.clk(clk_11M),
 
