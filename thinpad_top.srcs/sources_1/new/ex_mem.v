@@ -30,7 +30,7 @@ module ex_mem (
 	output reg					ctrl_detection_o,
 	output reg					ctrl_wb_RegWrite_o,
 	output reg					ctrl_wb_Mem2Reg_o,
-	output reg 					ctrl_mem_read_o,
+	output reg                  ctrl_mem_read_o,
 	output reg 					ctrl_mem_write_o,
 
 	// output alu result

@@ -3,7 +3,7 @@
 `include "defines.v"
 
 module uart_ctrl (
-    //output wire[2:0] debug,
+    output wire[2:0] debug,
 	input wire rst,
 	input wire clk,
 
@@ -25,7 +25,7 @@ module uart_ctrl (
 	reg[2:0] state;
 	assign uart_finish_o = (rst == `Asserted || state == 3'b111) 
 	                       ? `DeAsserted : `Asserted;
-	//assign debug = state;
+	assign debug = state;
 	                       
 	always @(posedge clk or posedge rst) begin
 		if (rst == `Asserted) begin
@@ -51,13 +51,14 @@ module uart_ctrl (
 					end
 				end
 				3'b001 : begin
-				    rdn_o <= `DeAsserted;
 					if (data_ready_i == `Asserted) begin
+					    rdn_o <= `DeAsserted;
 						state <= 3'b010;
 					end
 				end
 				3'b010 : begin
 					uart_read_data_o <= {24'b0, uart_read_data_i};
+					rdn_o <= `Asserted;
 					state <= 3'b111;
 				end
 				3'b011 : begin
@@ -82,8 +83,6 @@ module uart_ctrl (
 				3'b111 : begin
 					rdn_o <= `Asserted;
 					wrn_o <= `Asserted;
-					uart_read_data_o <= `High;
-                    uart_write_data_o <= `High;
 				end
 			endcase
 		end

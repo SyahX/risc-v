@@ -36,7 +36,7 @@ module id_ex (
 	// control output 
 	output reg					ctrl_wb_RegWrite_o,
 	output reg					ctrl_wb_Mem2Reg_o,
-	output reg 					ctrl_mem_read_o,
+	output reg                  ctrl_mem_read_o, 
 	output reg 					ctrl_mem_write_o,
 	output reg					ctrl_ex_AluSrc_o,
 	output reg[`CtrlAluOpBus] 	ctrl_ex_AluOp_o,

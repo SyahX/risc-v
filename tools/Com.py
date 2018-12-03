@@ -11,6 +11,7 @@ if __name__ == "__main__":
     tty = serial.Serial(port="/dev/ttyACM0", baudrate=9600)
     tty.reset_input_buffer()
     while(True):
-        print ("fuck")
-        a = tty.read(4)
-        print (hex(byte_string_to_int(a)))
+        # print ("fuck")
+        x = input("fuck : ")
+        tty.write(int_to_byte_string(int(x)))
+        print (hex(x))

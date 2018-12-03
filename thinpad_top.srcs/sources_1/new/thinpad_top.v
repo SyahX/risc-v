@@ -79,13 +79,15 @@ module thinpad_top(
     output wire video_clk,         //像素时钟输出
     output wire video_de           //行数据有效信号，用于区分消隐区
 );
+    wire[15:0] debug;
+    assign leds = {debug[2:0], uart_rdn, uart_wrn, uart_dataready, uart_tbre, uart_tsre, base_ram_data[7:0]};
 
     risc risc0(
-		.clk(clk_11M0592),
-		.clk_11M(clk_11M0592),
+		.clk(clock_btn),
+		.clk_11M(clock_btn),
         .rst(reset_btn),
         
-        .debug(leds),
+        .debug(debug),
         
         // ext
         .ext_ram_data(ext_ram_data),
