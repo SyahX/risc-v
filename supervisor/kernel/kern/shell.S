@@ -79,25 +79,30 @@ SHELL:
     nop
 
 .OP_R:                              // 操作 - 打印用户空间寄存器
-    addi sp, sp, -8                 // 保存s1,s2
+    addi sp, sp, -12                 // 保存s1,s2 DEBUG
     sw s1, 0(sp)
     sw s2, 4(sp)
+    sw s3, 8(sp)                    // DEBUG
 
+    lui s3, 0x80600
     lui s1, 0                       // DEBUG
     // lui s1, %hi(uregs)
     ori s2, zero, 124               // 计数器，打印124字节
 .LC0:
     lb a0, (0)(s1)                  // 读取字节
     addi s2, s2, -1                 // 滚动计数器
+    sw s2, (0)(s3)                  // DEBUG
     jal WRITESERIAL                 // 写入串口
+    addi s3, s3, 4                  //DEBUG
     nop
     addi s1, s1, 0x1                // 移动打印指针
-    bne s2, zero, .LC0              // git s打印循环
+    bne s2, zero, .LC0              // 打印循环
     nop
 
     lw s1, 0(sp)                    // 恢复s1,s2
     lw s2, 4(sp)
-    addi sp, sp, 8
+    lw s3, 8(sp)
+    addi sp, sp, 12                 // DEBUG
     j .DONE
     nop
 
