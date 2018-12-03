@@ -377,7 +377,7 @@ def run_D(addr, num):
         time.sleep(0.5)
     for i in range(4):
         outp.write(int_to_byte_string(num)[i])
-        time.sleep()
+        time.sleep(0.5)
     counter = 0
     while counter < num:
         val_raw = inp.read(4)
@@ -392,8 +392,12 @@ def run_U(addr, num):
         print("num % 4 should be zero")
         return
     outp.write(b'D')
-    outp.write(int_to_byte_string(addr))
-    outp.write(int_to_byte_string(num))
+    for i in range(4):
+        outp.write(int_to_byte_string(addr)[i])
+        time.sleep(0.5)
+    for i in range(4):
+        outp.write(int_to_byte_string(num)[i])
+        time.sleep(0.5)
     counter = 0
     while counter < num:
         val_raw = inp.read(4)
@@ -404,7 +408,9 @@ def run_U(addr, num):
 # G operation: run code from specified address
 def run_G(addr):
     outp.write(b'G')
-    outp.write(int_to_byte_string(addr))
+    for i in range(4):
+        outp.write(int_to_byte_string(addr)[i])
+        time.sleep(0.5)
     class TrapError(Exception):
         pass
     try:
