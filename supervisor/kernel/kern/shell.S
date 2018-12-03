@@ -87,12 +87,12 @@ SHELL:
     // lui s1, %hi(uregs)
     ori s2, zero, 124               // 计数器，打印124字节
 .LC0:
-    lb a0, %lo(uregs)(s1)           // 读取字节
+    lb a0, (0)(s1)                  // 读取字节
     addi s2, s2, -1                 // 滚动计数器
     jal WRITESERIAL                 // 写入串口
     nop
     addi s1, s1, 0x1                // 移动打印指针
-    bne s2, zero, .LC0              // 打印循环
+    bne s2, zero, .LC0              // git s打印循环
     nop
 
     lw s1, 0(sp)                    // 恢复s1,s2
