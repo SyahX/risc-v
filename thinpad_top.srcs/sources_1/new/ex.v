@@ -23,21 +23,22 @@ module ex (
 	output wire[`RegBus]		mem_write_data_o
 );
     wire[`RegBus] reg1;
-    reg[`RegBus] reg2;
+    wire[`RegBus] reg2;
+    assign reg2 = (ctrl_ex_AluSrc_i == `Asserted) ? imm_data_i[`RegBus] : reg2_data_i[`RegBus];
 	assign reg1 = reg1_data_i;
 	assign mem_write_data_o = reg2_data_i;
 	
 	wire[`RegBus] sign;
 	assign sign = (reg1 + (~reg2) + 1);
 	
-	always @ (*) begin
-		if (ctrl_ex_AluSrc_i == `Asserted) begin
-			reg2 <= imm_data_i[`RegBus];
-		end
-		else begin
-			reg2 <= reg2_data_i[`RegBus];
-		end
-	end
+	//always @ (*) begin
+	//	if (ctrl_ex_AluSrc_i == `Asserted) begin
+	//		reg2 <= imm_data_i[`RegBus];
+	//	end
+	//	else begin
+	//		reg2 <= reg2_data_i[`RegBus];
+	//	end
+	//end
 
 	always @ (*) begin
 		case (alu_ctrl_i)

@@ -32,6 +32,9 @@ module ram_ctrl (
 			ram_ce_n_o <= `Asserted;
 			ram_oe_n_o <= `Asserted;
             ram_we_n_o <= `Asserted;	
+            
+            ram_addr_o <= 20'hzzzzz;
+            ram_be_n_o <= 4'b1111;
 		end
 		else begin
 			ram_addr_o <= ram_addr_i;

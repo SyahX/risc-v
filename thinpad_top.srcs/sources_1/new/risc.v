@@ -199,8 +199,8 @@ module risc (
 		.rom_ce_o(rom_ce_n)
 	);
 
-	assign ctrl_if_flush = ctrl_pc_src | mem_ctrl_ram;
-	assign if_id_hold = id_ctrl_hold | ex_ctrl_hold;
+	assign ctrl_if_flush = ctrl_pc_src;
+	assign if_id_hold = id_ctrl_hold | ex_ctrl_hold | mem_ctrl_ram;
 	if_id if_id0(
 		.clk(clk),
 		.rst(rst),
@@ -319,7 +319,7 @@ module risc (
 	);
 
 	
-	assign id_ex_flush = ex_ctrl_hold;
+	assign id_ex_flush = ex_ctrl_hold | mem_ctrl_ram;
 	id_ex id_ex0(
 		.clk(clk),
 		.rst(rst),
