@@ -202,6 +202,7 @@ WELCOME:
     jal WRITESERIAL
     nop
     lui s3, 0x80500                 // DEBUG
+    sw s3, 0x40(s3)                 // DEBUG
     j SHELL                         // 开始交互
     nop
 
