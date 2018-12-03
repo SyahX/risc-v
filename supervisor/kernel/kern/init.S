@@ -201,6 +201,7 @@ WELCOME:
 33: ori a0, zero, 0x2e              // '.'
     jal WRITESERIAL
     nop
+    lui s3, 0x80500                 // DEBUG
     j SHELL                         // 开始交互
     nop
 
