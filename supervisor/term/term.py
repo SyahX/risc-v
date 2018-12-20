@@ -141,7 +141,7 @@ inst_struct = {
     "srli"  : [itype_r, 0b0010011, 0b101, 0b0000000],
     "srai"  : [itype_r, 0b0010011, 0b101, 0b0100000],
     "add"   : [itype_r, 0b0110011, 0b000, 0b0000000],
-    "sub"   : [itype_r, 0b0110011, 0b000, 0b0000000],
+    "sub"   : [itype_r, 0b0110011, 0b000, 0b0100000],
     "sll"   : [itype_r, 0b0110011, 0b001, 0b0000000],
     "slt"   : [itype_r, 0b0110011, 0b010, 0b0000000],
     "sltu"  : [itype_r, 0b0110011, 0b011, 0b0000000],
@@ -228,7 +228,7 @@ def inst2int(instr):
                     imm = ctypes.c_uint(int(component[k][2:], 16)).value
                 else:
                     imm = ctypes.c_uint(int(component[k])).value
-                print("immediate %d" % imm)
+                # print("immediate %d" % imm)
             except ValueError:
                 print("Immediate number is not right")
                 return ''
@@ -463,9 +463,6 @@ def MainLoop():
             elif cmd == 'G':
                 addr = raw_input('>>addr: 0x')
                 run_G(int(addr, 16))
-            elif cmd == 'T':
-                num = raw_input('>>num: ')
-                run_T(int(num))
             else:
                 print("Invalid command")
         except ValueError as e:

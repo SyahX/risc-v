@@ -82,9 +82,15 @@ module thinpad_top(
     wire[15:0] debug;
     //assign leds = {debug[2:0], uart_rdn, uart_wrn, uart_dataready, uart_tbre, uart_tsre, base_ram_data[7:0]};
     assign leds = debug;
+    wire clk_10M;
+    clock_new clock_new0(
+        .clk_50M(clk_50M),
+        .reset_btn(reset_btn),
+        .clk_10M(clk_10M)
+    );
     
     risc risc0(
-		.clk(clk_11M0592),
+		.clk(clk_10M),
 		.clk_11M(clk_11M0592),
         .rst(reset_btn),
         
@@ -118,10 +124,10 @@ module thinpad_top(
         .uart_wrn(uart_wrn)
 	);
     
-/* =========== Demo code begin =========== 
+ // =========== Demo code begin =========== 
 
 // PLL分频示例
-wire locked, clk_10M, clk_20M;
+/*wire locked, clk_10M, clk_20M;
 pll_example clock_gen 
  (
   // Clock out ports
