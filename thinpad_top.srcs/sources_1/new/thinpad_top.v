@@ -79,6 +79,66 @@ module thinpad_top(
     output wire video_clk,         //像素时钟输出
     output wire video_de           //行数据有效信号，用于区分消隐区
 );
+
+/*
+wire clk_25M;
+    reg clk = 1'b1;
+    reg[1:0] cnt = 2'b00;
+    always @ (posedge clk_50M) begin
+        
+        if (cnt == 2'b01) begin
+            cnt <= 2'b00;
+            clk <= ~clk;
+        end
+        else begin
+            cnt <= cnt + 1;
+        end
+        
+        clk <= ~clk;
+    end
+    
+    assign clk_25M = clk;
+*/
+    // PLL分频示例
+wire locked, clk_10M, clk_20M, clk_30M, clk_40M;
+pll_example clock_gen 
+ (
+  // Clock out ports
+  .clk_out1(clk_10M), 
+  .clk_out2(clk_20M), 
+  .clk_out3(clk_30M),
+  .clk_out4(clk_40M),
+  // Status and control signals
+  .reset(reset_btn), // PLL复位输入
+  .locked(locked), // 锁定输出，"1"表示时钟稳定，可作为后级电路复位
+ // Clock in ports
+  .clk_in1(clk_50M) // 外部时钟输入
+ );
+
+reg reset_of_clk10M;
+always@(posedge clk_10M or negedge locked) begin
+    if(~locked) reset_of_clk10M <= 1'b1;
+    else        reset_of_clk10M <= 1'b0;
+end
+
+reg reset_of_clk20M;
+always@(posedge clk_20M or negedge locked) begin
+    if(~locked) reset_of_clk20M <= 1'b1;
+    else        reset_of_clk20M <= 1'b0;
+end
+
+reg reset_of_clk30M;
+always@(posedge clk_30M or negedge locked) begin
+    if(~locked) reset_of_clk30M <= 1'b1;
+    else        reset_of_clk30M <= 1'b0;
+end
+
+reg reset_of_clk40M;
+always@(posedge clk_40M or negedge locked) begin
+    if(~locked) reset_of_clk40M <= 1'b1;
+    else        reset_of_clk40M <= 1'b0;
+end
+
     wire[15:0] debug;
     //assign leds = {debug[2:0], uart_rdn, uart_wrn, uart_dataready, uart_tbre, uart_tsre, base_ram_data[7:0]};
     assign leds = debug;
@@ -90,9 +150,9 @@ module thinpad_top(
     );
     
     risc risc0(
-		.clk(clk_10M),
+		.clk(clk_40M),
 		.clk_11M(clk_11M0592),
-        .rst(reset_btn),
+        .rst(reset_of_clk40M),
         
         .debug(debug),
         

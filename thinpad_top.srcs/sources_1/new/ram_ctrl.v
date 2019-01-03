@@ -45,8 +45,9 @@ module ram_ctrl (
 			
 		end
 	end
-
-	always @ (negedge clk) begin
+    
+    
+	always @ (*) begin
 		if (rst == `DeAsserted) begin
 			if (ram_we_n_o == `DeAsserted) begin	
 			    ram_write_data_o <= ram_write_data_i;
