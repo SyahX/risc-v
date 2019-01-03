@@ -26,9 +26,6 @@ uregs:                              // 通用寄存器组
 SHELL:
     jal READSERIAL                  // 读操作符
     nop
-    
-    sw t5, 0(s3)                   // DEBUG
-    addi s3, s3, 4                 // DEBUG
 
     ori t0, zero, SH_OP_R
     beq t5, t0, .OP_R
@@ -42,40 +39,7 @@ SHELL:
     ori t0, zero, SH_OP_G
     beq t5, t0, .OP_G
     nop
-    ori t0, zero, SH_OP_T
-    beq t5, t0, .OP_T
-    nop
     j .DONE                         // 错误的操作符，默认忽略
-    nop
-
-
-.OP_T:                              // 操作 - 打印TLB项
-    jal READSERIALWORD              // 取num(index)
-    nop
-    addi sp, sp, -0x18
-    sw s1, 0x0(sp)
-    sw s2, 0x4(sp)
-
-    addi s1, zero, -1               // 不支持TLB则返回全1
-    sw s1, 0xC(sp)
-    sw s1, 0x10(sp)
-    sw s1, 0x14(sp)
-    ori s2, zero, 0xC               // 打印12字节
-    addi s1, sp, 0xC                // ENTRYHI位置
-.LC3:
-    lb a0, 0x0(s1)                  // 读一字节
-    addi s2, s2, -1                 // 滚动计数器
-    jal WRITESERIAL                 // 打印
-    nop
-    addi s1, s1, 1                  // 移动打印指针
-    bne s2, zero, .LC3              // 打印循环
-    nop
-
-    lw s1, 0x0(sp)
-    lw s2, 0x4(sp)
-    addi sp, sp, 0x18
-
-    j .DONE
     nop
 
 .OP_R:                              // 操作 - 打印用户空间寄存器
@@ -128,39 +92,29 @@ SHELL:
     nop
 
 .OP_A:                              // 操作 - 写入内存num字节，num为4的倍数
-    addi sp, sp, -12                 // 保存s1,s2 DEBUG
+    addi sp, sp, -8                 // 保存s1,s2
     sw s1, 0(sp)
     sw s2, 4(sp)
-    sw s3, 8(sp)                    // DEBUG
-
-    lui s3, 0x80400
 
     jal READSERIALWORD
     nop
     or s1, t5, zero                 // 获得addr
-    sw t5, 0(s3)                    // DEBUG
-    addi s3, s3, 4                  // DEBUG
     jal READSERIALWORD
     nop
     or s2, t5, zero                 // 获得num
-    sw t5, 0(s3)                    // DEBUG
-    addi s3, s3, 4
     srl s2, s2, 2                   // num除4，获得字数
 .LC2:                               // 每次写入一字
     jal READSERIALWORD              // 从串口读入一字
     nop
     sw t5, 0(s1)                    // 写内存一字
-    sw t5, 0(s3)                    // DEBUG
     addi s2, s2, -1                 // 滚动计数器
     addi s1, s1, 4                  // 移动写指针
-    addi s3, s3, 4                  // DEBUG
     bne s2, zero, .LC2              // 写循环
     nop
 
     lw s1, 0(sp)                    // 恢复s1,s2
     lw s2, 4(sp)
-    lw s3, 4(sp)                    // DEBUG
-    addi sp, sp, 12                 // DEBUG
+    addi sp, sp, 8
     j .DONE
     nop
 

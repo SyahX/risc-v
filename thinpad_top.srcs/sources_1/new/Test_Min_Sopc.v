@@ -30,4 +30,11 @@ module Test_Min_Sopc(
         .rst(rst)
     );
     
+    wire clk_10M;
+    clock_new clock_new0(
+        .clk_50M(CLOCK_50),
+        .reset_btn(rst),
+        .clk_10M(clk_10M)
+        );
+    
 endmodule

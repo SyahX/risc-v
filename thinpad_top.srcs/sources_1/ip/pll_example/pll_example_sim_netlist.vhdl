@@ -4,7 +4,7 @@
 -- Date        : Thu Jan  3 20:58:14 2019
 -- Host        : ubuntu running 64-bit Ubuntu 16.04.5 LTS
 -- Command     : write_vhdl -force -mode funcsim
---               /home/syah/code/risc-v/thinpad_top.srcs/sources_1/ip/pll_example/pll_example_sim_netlist.vhdl
+--               /home/huangyf/My_code/Computer/risc-v/thinpad_top.srcs/sources_1/ip/pll_example/pll_example_sim_netlist.vhdl
 -- Design      : pll_example
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
