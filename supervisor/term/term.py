@@ -224,7 +224,7 @@ def inst2int(instr):
             # print("res: " + str(bin(res)))
         if ins_key[0] != itype_r:
             try:
-                if "x" in component[k]:
+                if "x" in component[k] or 'X' in component[k]:
                     imm = ctypes.c_uint(int(component[k][2:], 16)).value
                 else:
                     imm = ctypes.c_uint(int(component[k])).value
@@ -271,7 +271,6 @@ def inst2int(instr):
 # invoke assembler to encode single instruction (in risc-v 32i)
 # returns a byte string of encoded instruction, from lowest byte to highest byte
 # returns empty string on failure (in which case assembler messages are printed to stdout)
-# TODO:确定命令行的参数
 def single_line_asm(instr):
     tmp_asm = tempfile.NamedTemporaryFile(delete=False)
     tmp_obj = tempfile.NamedTemporaryFile(delete=False)
@@ -343,15 +342,9 @@ def run_A(addr):
             if instr == '':
                 continue
         outp.write(b'A')
-        for i in range(4):
-            outp.write(int_to_byte_string(addr)[i])
-            time.sleep(0.5)
-        for i in range(4):
-            outp.write(int_to_byte_string(4)[i])
-            time.sleep(0.5)
-        for i in range(4):
-            outp.write(instr[i])
-            time.sleep(0.5)
+        outp.write(int_to_byte_string(addr))
+        outp.write(int_to_byte_string(4))
+        outp.write(instr)
         addr = addr + 4
 
 # R operation: To show content in all register
@@ -372,12 +365,8 @@ def run_D(addr, num):
         print("num % 4 should be zero")
         return
     outp.write(b'D')
-    for i in range(4):
-        outp.write(int_to_byte_string(addr)[i])
-        time.sleep(0.5)
-    for i in range(4):
-        outp.write(int_to_byte_string(num)[i])
-        time.sleep(0.5)
+    outp.write(int_to_byte_string(addr))
+    outp.write(int_to_byte_string(num))
     counter = 0
     while counter < num:
         val_raw = inp.read(4)
@@ -392,12 +381,8 @@ def run_U(addr, num):
         print("num % 4 should be zero")
         return
     outp.write(b'D')
-    for i in range(4):
-        outp.write(int_to_byte_string(addr)[i])
-        time.sleep(0.5)
-    for i in range(4):
-        outp.write(int_to_byte_string(num)[i])
-        time.sleep(0.5)
+    outp.write(int_to_byte_string(addr))
+    outp.write(int_to_byte_string(num))
     counter = 0
     while counter < num:
         val_raw = inp.read(4)
@@ -408,9 +393,7 @@ def run_U(addr, num):
 # G operation: run code from specified address
 def run_G(addr):
     outp.write(b'G')
-    for i in range(4):
-        outp.write(int_to_byte_string(addr)[i])
-        time.sleep(0.5)
+    outp.write(int_to_byte_string(addr))
     class TrapError(Exception):
         pass
     try:
