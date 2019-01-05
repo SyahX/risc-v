@@ -1,0 +1,16 @@
+lui  iiiiiiiiiiiiiiiiiiiittttt0110111
+jal  iiiiiiiiiiiiiiiiiiiittttt1101111
+jalr iiiiiiiiiiiisssss000ttttt1100111
+beq  iiiiiiidddddsssss000iiiii1100011
+bne  iiiiiiidddddsssss001iiiii1100011
+lb   iiiiiiiiiiiisssss000ttttt0000011
+lw   iiiiiiiiiiiisssss010ttttt0000011
+sb   iiiiiiidddddsssss000iiiii0100011
+sw   iiiiiiidddddsssss010iiiii0100011
+addi iiiiiiiiiiiisssss000ttttt0010011
+ori  iiiiiiiiiiiisssss110ttttt0010011
+andi iiiiiiiiiiiisssss111ttttt0010011
+slli 0000000iiiiisssss001ttttt0010011
+srli 0000000iiiiisssss101ttttt0010011
+xor  0000000dddddsssss100ttttt0110011
+or   0000000dddddsssss110ttttt0110011

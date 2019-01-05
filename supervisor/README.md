@@ -8,7 +8,24 @@ riscv-gnu-toolchain(32位)，可以在Github上下载得到(https://github.com/r
 
 ## Kernel
 
-对应kern文件夹下的汇编代码，通过Makefile完成编译过程并生成对应的二进制代码，即可以在CPU上运行的监控代码。其使用到的代码条数为20多条，且都符合RV32I的准则。本次的kernel仅有一个版本，不支持中断和异常，可以留作之后的进阶项目。
+对应kern文件夹下的汇编代码，通过Makefile完成编译过程并生成对应的二进制代码，即可以在CPU上运行的监控代码。其使用到的代码条数为16条，且都符合RV32I的准则。本次的kernel仅有一个版本，不支持中断和异常，可以留作之后的进阶项目。
+
+1. `lui`  iiiiiiiiiiiiiiiiiiiittttt0110111
+2. `jal`  iiiiiiiiiiiiiiiiiiiittttt1101111
+3. `jalr` iiiiiiiiiiiisssss000ttttt1100111
+4. `beq`  iiiiiiidddddsssss000iiiii1100011
+5. `bne`  iiiiiiidddddsssss001iiiii1100011
+6. `lb`   iiiiiiiiiiiisssss000ttttt0000011
+7. `lw`   iiiiiiiiiiiisssss010ttttt0000011
+8. `sb`   iiiiiiidddddsssss000iiiii0100011
+9. `sw`   iiiiiiidddddsssss010iiiii0100011
+10. `addi` iiiiiiiiiiiisssss000ttttt0010011
+11. `ori`  iiiiiiiiiiiisssss110ttttt0010011
+12. `andi` iiiiiiiiiiiisssss111ttttt0010011
+13. `slli` 0000000iiiiisssss001ttttt0010011
+14. `srli` 0000000iiiiisssss101ttttt0010011
+15. `xor`  0000000dddddsssss100ttttt0110011
+16. `or`   0000000dddddsssss110ttttt0110011
 
 ### 使用方法
 
